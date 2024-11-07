@@ -31,7 +31,7 @@ public partial class Player : CharacterBody3D, IPlayer, ITargetable, IAttackable
 	public float NowHealth;
 	
 	
-	protected Item _currentItem;
+	public Item CurrentItem;
 	
 	public override void _Ready()
 	{
@@ -48,8 +48,8 @@ public partial class Player : CharacterBody3D, IPlayer, ITargetable, IAttackable
 	{
 		Move(delta);
 		if (Input.IsActionPressed("Attack")) Attack();
-		if (Input.IsActionJustPressed("Action") && _currentItem != null && !Input.IsActionPressed("AbilityLeft") &&
-		    !Input.IsActionPressed("AbilityRight")) _currentItem.OnAction();
+		if (Input.IsActionJustPressed("Action") && CurrentItem != null && !Input.IsActionPressed("AbilityLeft") &&
+		    !Input.IsActionPressed("AbilityRight")) CurrentItem.OnAction();
 	}
 
 	private void Attack()
@@ -86,8 +86,8 @@ public partial class Player : CharacterBody3D, IPlayer, ITargetable, IAttackable
 			foreach (var body in _itemPick.GetOverlappingBodies())
 			{
 				if(body is not Item item) return;
-				if (_currentItem == null || GlobalPosition.DistanceTo(item.GlobalPosition) <
-				    _currentItem.GlobalPosition.DistanceTo(_currentItem.GlobalPosition)) _currentItem = item;
+				if (CurrentItem == null || GlobalPosition.DistanceTo(item.GlobalPosition) <
+				    CurrentItem.GlobalPosition.DistanceTo(CurrentItem.GlobalPosition)) CurrentItem = item;
 			}
 			if (Input.IsActionPressed("Run"))
 			{
@@ -171,7 +171,7 @@ public partial class Player : CharacterBody3D, IPlayer, ITargetable, IAttackable
 	{
 		if(body is not Item item) return;
 		item.OnFarFromPlayer();
-		if(_currentItem == item) _currentItem = null;
+		if(CurrentItem == item) CurrentItem = null;
 	}
 	
 	public override void _Input(InputEvent @event)

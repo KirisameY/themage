@@ -205,6 +205,7 @@ Action={
 3d_physics/layer_3="TeamB"
 3d_navigation/layer_3="Air"
 3d_physics/layer_4="Items"
+avoidance/layer_1="Default"
 
 [rendering]
 

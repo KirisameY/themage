@@ -60,3 +60,11 @@ no_depth_test = true
 text = "只是一个普普通通的告示牌"
 font_size = 60
 outline_size = 20
+
+[node name="Texture" parent="Info" index="0"]
+visible = false
+
+[node name="Text" parent="Info" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.994003, 0)
+visible = false
+text = "查看"

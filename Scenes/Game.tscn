@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://bumttdvbt0da8"]
+[gd_scene load_steps=39 format=3 uid="uid://bumttdvbt0da8"]
 
 [ext_resource type="PackedScene" uid="uid://bb68gnxsxx8hy" path="res://Scenes/Map.tscn" id="1_gi0pr"]
 [ext_resource type="Script" path="res://Scripts/Game.cs" id="1_gs5qa"]
@@ -7,12 +7,14 @@
 [ext_resource type="PackedScene" uid="uid://d2cd4cnoxpxhl" path="res://Scenes/Player.tscn" id="3_jfay1"]
 [ext_resource type="PackedScene" uid="uid://mf8xm258dscn" path="res://Scenes/Enemies/SlimeZero.tscn" id="4_v2fvr"]
 [ext_resource type="PackedScene" uid="uid://crmktmb86dm06" path="res://Scenes/Items/board.tscn" id="5_pp7ee"]
+[ext_resource type="Script" path="res://Scripts/Weapons/SlimeZero.cs" id="8_ehr1c"]
 [ext_resource type="PackedScene" uid="uid://b20so5ttcpexc" path="res://Scenes/Bullets/SmallFireball.tscn" id="8_w10ov"]
 [ext_resource type="Script" path="res://Scripts/Weapon.cs" id="9_2ocny"]
 [ext_resource type="Texture2D" uid="uid://bphl1g4snbg5l" path="res://Assets/Textures/Ui/leftstick_light.png" id="10_37jko"]
 [ext_resource type="Texture2D" uid="uid://dnk1dl01y3hi2" path="res://Assets/Textures/Ui/xbox_rt_light.png" id="11_5se4d"]
 [ext_resource type="Texture2D" uid="uid://cpjq50wl556i1" path="res://Assets/Textures/Ui/xbox_lt_light.png" id="12_uo2si"]
 [ext_resource type="PackedScene" uid="uid://dbminbih2tp63" path="res://Scenes/ItemBar.tscn" id="13_1jr7k"]
+[ext_resource type="PackedScene" uid="uid://dnvjrr3bpxk07" path="res://Scenes/Items/SpawnerDebug.tscn" id="14_lbqgd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wu6kb"]
 sky_horizon_color = Color(0.619, 0.665825, 0.7025, 1)
@@ -143,12 +145,62 @@ detail_sample_distance = 1.0
 detail_sample_max_error = 0.5
 filter_ledge_spans = true
 
-[sub_resource type="Resource" id="Resource_4h3dx"]
+[sub_resource type="Resource" id="Resource_kuxv7"]
+resource_local_to_scene = true
+script = ExtResource("8_ehr1c")
+Warmup = 0.2
+Delay = 1.0
+Range = 1.0
+Level = 0
+IsTargetGround = false
+Data = {}
+
+[sub_resource type="Resource" id="Resource_bb2b8"]
+resource_local_to_scene = true
+script = ExtResource("8_ehr1c")
+Warmup = 0.2
+Delay = 1.0
+Range = 1.0
+Level = 0
+IsTargetGround = false
+Data = {}
+
+[sub_resource type="Resource" id="Resource_o2q56"]
+resource_local_to_scene = true
+script = ExtResource("8_ehr1c")
+Warmup = 0.2
+Delay = 1.0
+Range = 1.0
+Level = 0
+IsTargetGround = false
+Data = {}
+
+[sub_resource type="Resource" id="Resource_yv61a"]
+resource_local_to_scene = true
+script = ExtResource("8_ehr1c")
+Warmup = 0.2
+Delay = 1.0
+Range = 1.0
+Level = 0
+IsTargetGround = false
+Data = {}
+
+[sub_resource type="Resource" id="Resource_p2gas"]
+resource_local_to_scene = true
+script = ExtResource("8_ehr1c")
+Warmup = 0.2
+Delay = 1.0
+Range = 1.0
+Level = 0
+IsTargetGround = false
+Data = {}
+
+[sub_resource type="Resource" id="Resource_k26us"]
 resource_local_to_scene = true
 script = ExtResource("9_2ocny")
 BulletScene = ExtResource("8_w10ov")
 Warmup = 0.0
-Delay = 1.0
+Delay = 0.0
 Range = 100.0
 Level = 1
 IsTargetGround = false
@@ -189,6 +241,7 @@ environment = SubResource("Environment_ymbfg")
 camera_attributes = SubResource("CameraAttributesPractical_j3b7v")
 
 [node name="Water" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.90735e-06, 0)
 mesh = SubResource("PlaneMesh_juddp")
 skeleton = NodePath("../MapObjects")
 script = SubResource("GDScript_3oqdn")
@@ -202,7 +255,6 @@ unique_name_in_owner = true
 metadata/_edit_lock_ = true
 
 [node name="Navigation" type="NavigationRegion3D" parent="MapObjects"]
-visible = false
 navigation_mesh = SubResource("NavigationMesh_0y2iq")
 navigation_layers = 5
 
@@ -220,8 +272,11 @@ metadata/_editor_floor_ = Vector3(0, 1, 0)
 enable_node_path = NodePath("")
 
 [node name="Board" parent="MapObjects/Test" instance=ExtResource("5_pp7ee")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -5, 1.5, -3)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -5.5, 1.5, -2.5)
 LabelText = "阿巴阿巴!!"
+
+[node name="Spawner" parent="MapObjects/Test" instance=ExtResource("14_lbqgd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 1.5, 2.5)
 
 [node name="GameObjects" type="Node3D" parent="."]
 unique_name_in_owner = true
@@ -230,30 +285,35 @@ unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.526, 2, -2.052)
 axis_lock_angular_x = false
 axis_lock_angular_z = false
+Weapon = SubResource("Resource_kuxv7")
 
 [node name="Enemy2" parent="GameObjects" instance=ExtResource("4_v2fvr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.332, 2, 4.532)
 axis_lock_angular_x = false
 axis_lock_angular_z = false
+Weapon = SubResource("Resource_bb2b8")
 
 [node name="Enemy3" parent="GameObjects" instance=ExtResource("4_v2fvr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.365, 2, -1.984)
 axis_lock_angular_x = false
 axis_lock_angular_z = false
+Weapon = SubResource("Resource_o2q56")
 
 [node name="Enemy4" parent="GameObjects" instance=ExtResource("4_v2fvr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.844, 2, 4.48)
 axis_lock_angular_x = false
 axis_lock_angular_z = false
+Weapon = SubResource("Resource_yv61a")
 
 [node name="Enemy5" parent="GameObjects" instance=ExtResource("4_v2fvr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4203, 2, 0.664042)
 axis_lock_angular_x = false
 axis_lock_angular_z = false
+Weapon = SubResource("Resource_p2gas")
 
 [node name="Player" parent="." instance=ExtResource("3_jfay1")]
 unique_name_in_owner = true
-Weapon = SubResource("Resource_4h3dx")
+Weapon = SubResource("Resource_k26us")
 
 [node name="UI" type="CanvasLayer" parent="."]
 

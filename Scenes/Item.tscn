@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dqw2ygpfya2dw"]
+[gd_scene load_steps=4 format=3 uid="uid://dqw2ygpfya2dw"]
 
 [ext_resource type="Script" path="res://Scripts/Item.cs" id="1_mdeid"]
+[ext_resource type="Texture2D" uid="uid://c80v8fhhp8jmk" path="res://Assets/Textures/Ui/xbox_x_blue.png" id="2_f1tjd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2yakm"]
 
@@ -11,3 +12,19 @@ script = ExtResource("1_mdeid")
 
 [node name="Shape" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_2yakm")
+
+[node name="Info" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+visible = false
+
+[node name="Texture" type="Sprite3D" parent="Info"]
+billboard = 1
+texture_filter = 0
+texture = ExtResource("2_f1tjd")
+
+[node name="Text" type="Label3D" parent="Info"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.994003, 0)
+billboard = 1
+texture_filter = 0
+text = "使用"
+font_size = 50
