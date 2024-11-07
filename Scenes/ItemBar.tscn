@@ -1,0 +1,605 @@
+[gd_scene load_steps=12 format=3 uid="uid://dbminbih2tp63"]
+
+[ext_resource type="Texture2D" uid="uid://c8oiwf0sx5vig" path="res://Assets/Textures/Ui/xbox_lb_light.png" id="1_vdjb4"]
+[ext_resource type="Texture2D" uid="uid://beefjx04tk6fc" path="res://Assets/Textures/Ui/arrow_up_light.png" id="2_ytmf6"]
+[ext_resource type="Texture2D" uid="uid://cu5bausny56hb" path="res://Assets/Textures/Ui/arrow_right_light.png" id="3_d2vql"]
+[ext_resource type="Texture2D" uid="uid://co7m6wpic76e" path="res://Assets/Textures/Ui/arrow_down_light.png" id="4_kut6p"]
+[ext_resource type="Texture2D" uid="uid://chfw7ie2tygu4" path="res://Assets/Textures/Ui/arrow_left_light.png" id="5_kk2w5"]
+[ext_resource type="Texture2D" uid="uid://c70s6j38n3bci" path="res://Assets/Textures/Ui/xbox_y_yellow.png" id="6_b378h"]
+[ext_resource type="Texture2D" uid="uid://c80v8fhhp8jmk" path="res://Assets/Textures/Ui/xbox_x_blue.png" id="7_jj1m6"]
+[ext_resource type="Texture2D" uid="uid://4pthfnb33e0w" path="res://Assets/Textures/Ui/xbox_b_red.png" id="8_gjq1u"]
+[ext_resource type="Texture2D" uid="uid://dl56qody14gcs" path="res://Assets/Textures/Ui/xbox_a_green.png" id="9_jh6s7"]
+[ext_resource type="Texture2D" uid="uid://bwixbvb6w7e1n" path="res://Assets/Textures/Ui/xbox_rb_light.png" id="10_b5s5b"]
+[ext_resource type="Texture2D" uid="uid://bbav5dtr3alqi" path="res://Assets/Textures/Ui/ItemBar.png" id="11_awdgj"]
+
+[node name="ItemBar" type="VSplitContainer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+dragger_visibility = 1
+
+[node name="Info" type="HSplitContainer" parent="."]
+layout_mode = 2
+split_offset = -100
+
+[node name="Left" type="HBoxContainer" parent="Info"]
+layout_mode = 2
+alignment = 1
+
+[node name="Lb" type="TextureRect" parent="Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("1_vdjb4")
+stretch_mode = 3
+
+[node name="1" type="TextureRect" parent="Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("2_ytmf6")
+stretch_mode = 3
+
+[node name="2" type="TextureRect" parent="Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("3_d2vql")
+stretch_mode = 3
+
+[node name="3" type="TextureRect" parent="Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("4_kut6p")
+stretch_mode = 3
+
+[node name="4" type="TextureRect" parent="Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("5_kk2w5")
+stretch_mode = 3
+
+[node name="5" type="TextureRect" parent="Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("6_b378h")
+stretch_mode = 3
+
+[node name="6" type="TextureRect" parent="Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("7_jj1m6")
+stretch_mode = 3
+
+[node name="7" type="TextureRect" parent="Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("8_gjq1u")
+stretch_mode = 3
+
+[node name="8" type="TextureRect" parent="Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("9_jh6s7")
+stretch_mode = 3
+
+[node name="right" type="HBoxContainer" parent="Info"]
+layout_mode = 2
+alignment = 1
+
+[node name="1" type="TextureRect" parent="Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("2_ytmf6")
+stretch_mode = 3
+
+[node name="2" type="TextureRect" parent="Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("3_d2vql")
+stretch_mode = 3
+
+[node name="3" type="TextureRect" parent="Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("4_kut6p")
+stretch_mode = 3
+
+[node name="4" type="TextureRect" parent="Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("5_kk2w5")
+stretch_mode = 3
+
+[node name="5" type="TextureRect" parent="Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("6_b378h")
+stretch_mode = 3
+
+[node name="6" type="TextureRect" parent="Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("7_jj1m6")
+stretch_mode = 3
+
+[node name="7" type="TextureRect" parent="Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("8_gjq1u")
+stretch_mode = 3
+
+[node name="8" type="TextureRect" parent="Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("9_jh6s7")
+stretch_mode = 3
+
+[node name="Rb" type="TextureRect" parent="Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("10_b5s5b")
+stretch_mode = 3
+
+[node name="ItemBar" type="HSplitContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+dragger_visibility = 1
+
+[node name="Left" type="HBoxContainer" parent="ItemBar"]
+layout_mode = 2
+alignment = 1
+
+[node name="1" type="NinePatchRect" parent="ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Left/1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Left/1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="2" type="NinePatchRect" parent="ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Left/2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Left/2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="3" type="NinePatchRect" parent="ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Left/3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Left/3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="4" type="NinePatchRect" parent="ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Left/4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Left/4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="5" type="NinePatchRect" parent="ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Left/5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Left/5"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="6" type="NinePatchRect" parent="ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Left/6"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Left/6"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="7" type="NinePatchRect" parent="ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Left/7"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Left/7"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="8" type="NinePatchRect" parent="ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Left/8"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Left/8"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="Right" type="HBoxContainer" parent="ItemBar"]
+layout_mode = 2
+alignment = 1
+
+[node name="1" type="NinePatchRect" parent="ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Right/1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Right/1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="2" type="NinePatchRect" parent="ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Right/2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Right/2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="3" type="NinePatchRect" parent="ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Right/3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Right/3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="4" type="NinePatchRect" parent="ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Right/4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Right/4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="5" type="NinePatchRect" parent="ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Right/5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Right/5"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="6" type="NinePatchRect" parent="ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Right/6"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Right/6"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="7" type="NinePatchRect" parent="ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Right/7"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Right/7"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="8" type="NinePatchRect" parent="ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_awdgj")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="ItemBar/Right/8"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="ItemBar/Right/8"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30

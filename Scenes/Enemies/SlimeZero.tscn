@@ -16,7 +16,7 @@ Data = {}
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_akesb"]
 height = 0.5
-radius = 0.3
+radius = 0.4
 
 [sub_resource type="Animation" id="Animation_pvagl"]
 length = 0.001

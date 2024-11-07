@@ -18,6 +18,8 @@ config/icon="res://icon.svg"
 
 [display]
 
+window/size/viewport_width=2560
+window/size/viewport_height=1600
 window/size/mode=2
 window/stretch/aspect="expand"
 window/handheld/orientation=4

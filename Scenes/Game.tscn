@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bumttdvbt0da8"]
+[gd_scene load_steps=42 format=3 uid="uid://bumttdvbt0da8"]
 
 [ext_resource type="PackedScene" uid="uid://bb68gnxsxx8hy" path="res://Scenes/Map.tscn" id="1_gi0pr"]
 [ext_resource type="Script" path="res://Scripts/Game.cs" id="1_gs5qa"]
@@ -12,6 +12,17 @@
 [ext_resource type="Texture2D" uid="uid://bphl1g4snbg5l" path="res://Assets/Textures/Ui/leftstick_light.png" id="10_37jko"]
 [ext_resource type="Texture2D" uid="uid://dnk1dl01y3hi2" path="res://Assets/Textures/Ui/xbox_rt_light.png" id="11_5se4d"]
 [ext_resource type="Texture2D" uid="uid://cpjq50wl556i1" path="res://Assets/Textures/Ui/xbox_lt_light.png" id="12_uo2si"]
+[ext_resource type="Texture2D" uid="uid://bbav5dtr3alqi" path="res://Assets/Textures/Ui/ItemBar.png" id="13_kvnqk"]
+[ext_resource type="Texture2D" uid="uid://c8oiwf0sx5vig" path="res://Assets/Textures/Ui/xbox_lb_light.png" id="13_lkyl2"]
+[ext_resource type="Texture2D" uid="uid://beefjx04tk6fc" path="res://Assets/Textures/Ui/arrow_up_light.png" id="14_q0kbx"]
+[ext_resource type="Texture2D" uid="uid://cu5bausny56hb" path="res://Assets/Textures/Ui/arrow_right_light.png" id="15_h3nwu"]
+[ext_resource type="Texture2D" uid="uid://co7m6wpic76e" path="res://Assets/Textures/Ui/arrow_down_light.png" id="16_stp1c"]
+[ext_resource type="Texture2D" uid="uid://chfw7ie2tygu4" path="res://Assets/Textures/Ui/arrow_left_light.png" id="17_8mait"]
+[ext_resource type="Texture2D" uid="uid://c70s6j38n3bci" path="res://Assets/Textures/Ui/xbox_y_yellow.png" id="18_ink85"]
+[ext_resource type="Texture2D" uid="uid://c80v8fhhp8jmk" path="res://Assets/Textures/Ui/xbox_x_blue.png" id="19_08rtf"]
+[ext_resource type="Texture2D" uid="uid://4pthfnb33e0w" path="res://Assets/Textures/Ui/xbox_b_red.png" id="20_kg5jc"]
+[ext_resource type="Texture2D" uid="uid://dl56qody14gcs" path="res://Assets/Textures/Ui/xbox_a_green.png" id="21_mpqi6"]
+[ext_resource type="Texture2D" uid="uid://bwixbvb6w7e1n" path="res://Assets/Textures/Ui/xbox_rb_light.png" id="22_dt325"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wu6kb"]
 sky_horizon_color = Color(0.619, 0.665825, 0.7025, 1)
@@ -256,35 +267,49 @@ Weapon = SubResource("Resource_4h3dx")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="Info1" type="HSplitContainer" parent="UI"]
-anchors_preset = 2
+[node name="BaseInfo" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Info1" type="HSplitContainer" parent="UI/BaseInfo"]
+layout_mode = 1
+anchors_preset = -1
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 30.0
+offset_top = -102.0
+offset_right = 144.0
 offset_bottom = -60.0
 grow_vertical = 0
 scale = Vector2(2, 2)
 dragger_visibility = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Info1"]
+[node name="TextureRect" type="TextureRect" parent="UI/BaseInfo/Info1"]
 layout_mode = 2
 texture = ExtResource("10_37jko")
 expand_mode = 2
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="UI/Info1"]
+[node name="Label" type="Label" parent="UI/BaseInfo/Info1"]
 layout_mode = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 30
 text = "移动"
 
-[node name="Info2" type="HSplitContainer" parent="UI"]
-anchors_preset = 3
+[node name="Info2" type="HSplitContainer" parent="UI/BaseInfo"]
+layout_mode = 1
+anchors_preset = -1
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -264.0
+offset_top = -102.0
 offset_right = -150.0
 offset_bottom = -60.0
 grow_horizontal = 0
@@ -292,35 +317,38 @@ grow_vertical = 0
 scale = Vector2(2, 2)
 dragger_visibility = 1
 
-[node name="Label" type="Label" parent="UI/Info2"]
+[node name="Label" type="Label" parent="UI/BaseInfo/Info2"]
 layout_mode = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 30
 text = "攻击"
 
-[node name="TextureRect" type="TextureRect" parent="UI/Info2"]
+[node name="TextureRect" type="TextureRect" parent="UI/BaseInfo/Info2"]
 layout_mode = 2
 texture = ExtResource("11_5se4d")
 expand_mode = 2
 stretch_mode = 5
 
-[node name="Info3" type="HSplitContainer" parent="UI"]
-anchors_preset = 2
+[node name="Info3" type="HSplitContainer" parent="UI/BaseInfo"]
+layout_mode = 1
+anchors_preset = -1
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 30.0
+offset_top = -162.0
+offset_right = 144.0
 offset_bottom = -120.0
 grow_vertical = 0
 dragger_visibility = 1
 
-[node name="TextureRect" type="TextureRect" parent="UI/Info3"]
+[node name="TextureRect" type="TextureRect" parent="UI/BaseInfo/Info3"]
 layout_mode = 2
 texture = ExtResource("12_uo2si")
 expand_mode = 2
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="UI/Info3"]
+[node name="Label" type="Label" parent="UI/BaseInfo/Info3"]
 layout_mode = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
@@ -328,6 +356,7 @@ theme_override_font_sizes/font_size = 30
 text = "加速"
 
 [node name="HpBar" type="ProgressBar" parent="UI"]
+anchors_preset = -1
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 500.0
@@ -335,3 +364,595 @@ offset_bottom = 50.0
 theme_override_styles/background = SubResource("StyleBoxFlat_6hno6")
 theme_override_styles/fill = SubResource("StyleBoxFlat_e6xmv")
 value = 50.0
+
+[node name="ItemBar" type="VSplitContainer" parent="UI"]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+dragger_visibility = 1
+
+[node name="Info" type="HSplitContainer" parent="UI/ItemBar"]
+layout_mode = 2
+split_offset = -100
+
+[node name="Left" type="HBoxContainer" parent="UI/ItemBar/Info"]
+layout_mode = 2
+alignment = 1
+
+[node name="Lb" type="TextureRect" parent="UI/ItemBar/Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("13_lkyl2")
+stretch_mode = 3
+
+[node name="1" type="TextureRect" parent="UI/ItemBar/Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("14_q0kbx")
+stretch_mode = 3
+
+[node name="2" type="TextureRect" parent="UI/ItemBar/Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("15_h3nwu")
+stretch_mode = 3
+
+[node name="3" type="TextureRect" parent="UI/ItemBar/Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("16_stp1c")
+stretch_mode = 3
+
+[node name="4" type="TextureRect" parent="UI/ItemBar/Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("17_8mait")
+stretch_mode = 3
+
+[node name="5" type="TextureRect" parent="UI/ItemBar/Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("18_ink85")
+stretch_mode = 3
+
+[node name="6" type="TextureRect" parent="UI/ItemBar/Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("19_08rtf")
+stretch_mode = 3
+
+[node name="7" type="TextureRect" parent="UI/ItemBar/Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("20_kg5jc")
+stretch_mode = 3
+
+[node name="8" type="TextureRect" parent="UI/ItemBar/Info/Left"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("21_mpqi6")
+stretch_mode = 3
+
+[node name="right" type="HBoxContainer" parent="UI/ItemBar/Info"]
+layout_mode = 2
+alignment = 1
+
+[node name="1" type="TextureRect" parent="UI/ItemBar/Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("14_q0kbx")
+stretch_mode = 3
+
+[node name="2" type="TextureRect" parent="UI/ItemBar/Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("15_h3nwu")
+stretch_mode = 3
+
+[node name="3" type="TextureRect" parent="UI/ItemBar/Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("16_stp1c")
+stretch_mode = 3
+
+[node name="4" type="TextureRect" parent="UI/ItemBar/Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("17_8mait")
+stretch_mode = 3
+
+[node name="5" type="TextureRect" parent="UI/ItemBar/Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("18_ink85")
+stretch_mode = 3
+
+[node name="6" type="TextureRect" parent="UI/ItemBar/Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("19_08rtf")
+stretch_mode = 3
+
+[node name="7" type="TextureRect" parent="UI/ItemBar/Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("20_kg5jc")
+stretch_mode = 3
+
+[node name="8" type="TextureRect" parent="UI/ItemBar/Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("21_mpqi6")
+stretch_mode = 3
+
+[node name="Rb" type="TextureRect" parent="UI/ItemBar/Info/right"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("22_dt325")
+stretch_mode = 3
+
+[node name="ItemBar" type="HSplitContainer" parent="UI/ItemBar"]
+layout_mode = 2
+size_flags_horizontal = 4
+dragger_visibility = 1
+
+[node name="Left" type="HBoxContainer" parent="UI/ItemBar/ItemBar"]
+layout_mode = 2
+alignment = 1
+
+[node name="1" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Left/1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Left/1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="2" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Left/2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Left/2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="3" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Left/3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Left/3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="4" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Left/4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Left/4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="5" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Left/5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Left/5"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="6" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Left/6"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Left/6"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="7" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Left/7"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Left/7"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="8" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Left"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Left/8"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Left/8"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="Right" type="HBoxContainer" parent="UI/ItemBar/ItemBar"]
+layout_mode = 2
+alignment = 1
+
+[node name="1" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Right/1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Right/1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="2" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Right/2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Right/2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="3" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Right/3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Right/3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="4" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Right/4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Right/4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="5" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Right/5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Right/5"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="6" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Right/6"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Right/6"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="7" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Right/7"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Right/7"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+
+[node name="8" type="NinePatchRect" parent="UI/ItemBar/ItemBar/Right"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("13_kvnqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="image" type="TextureRect" parent="UI/ItemBar/ItemBar/Right/8"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="count" type="Label" parent="UI/ItemBar/ItemBar/Right/8"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30

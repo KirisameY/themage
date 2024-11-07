@@ -47,8 +47,7 @@ public partial class Player : CharacterBody3D, IPlayer, ITargetable, IAttackable
 	public override void _PhysicsProcess(double delta)
 	{
 		Move(delta);
-		if (Input.IsActionPressed("Attack") && !Input.IsActionPressed("AbilityLeft") &&
-		    !Input.IsActionPressed("AbilityRight")) Attack();
+		if (Input.IsActionPressed("Attack")) Attack();
 		if (Input.IsActionJustPressed("Action") && _currentItem != null && !Input.IsActionPressed("AbilityLeft") &&
 		    !Input.IsActionPressed("AbilityRight")) _currentItem.OnAction();
 	}
@@ -65,7 +64,8 @@ public partial class Player : CharacterBody3D, IPlayer, ITargetable, IAttackable
 		{
 			velocity += GetGravity() * (float)delta;
 		}
-		if (Input.IsActionJustPressed("Jump") && IsOnFloor())
+		if (Input.IsActionJustPressed("Jump") && IsOnFloor() && !Input.IsActionPressed("AbilityLeft") &&
+		    !Input.IsActionPressed("AbilityRight"))
 		{
 			velocity.Y = JumpVelocity;
 		}
@@ -174,7 +174,7 @@ public partial class Player : CharacterBody3D, IPlayer, ITargetable, IAttackable
 		if(_currentItem == item) _currentItem = null;
 	}
 	
-	public override async void _UnhandledInput(InputEvent @event)
+	public override void _Input(InputEvent @event)
 	{
 		switch (@event)
 		{
