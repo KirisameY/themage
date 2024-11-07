@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://h1p28kn1uihw"
+path="res://.godot/imported/WallBrick.obj-f5b21bae0f0cd23666c03a39d3f6e47c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/WallBrick.obj-f5b21bae0f0cd23666c03a39d3f6e47c.mesh"]
+
+source_file="res://Assets/Models/Blocks/WallBrick.obj"
+dest_files=["res://.godot/imported/WallBrick.obj-f5b21bae0f0cd23666c03a39d3f6e47c.mesh", "res://.godot/imported/WallBrick.obj-f5b21bae0f0cd23666c03a39d3f6e47c.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

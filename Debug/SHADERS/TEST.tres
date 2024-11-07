@@ -1,0 +1,51 @@
+[gd_resource type="VisualShader" load_steps=4 format=3 uid="uid://dugmtieabkhej"]
+
+[sub_resource type="VisualShaderNodeLinearSceneDepth" id="VisualShaderNodeLinearSceneDepth_hi0n7"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_cg6pa"]
+expanded_output_ports = [0]
+input_name = "vertex"
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_b1oji"]
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform sampler2D depth_tex_frg_2 : hint_depth_texture;
+
+
+
+void fragment() {
+// Input:3
+	vec3 n_out3p0 = VERTEX;
+	float n_out3p3 = n_out3p0.b;
+
+
+	float n_out2p0;
+// LinearSceneDepth:2
+	{
+		float __log_depth = textureLod(depth_tex_frg_2, SCREEN_UV, 0.0).x;
+	vec4 __depth_view = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, __log_depth, 1.0);
+		__depth_view.xyz /= __depth_view.w;
+		n_out2p0 = -__depth_view.z;
+	}
+
+
+// FloatOp:4
+	float n_out4p0 = n_out3p3 + n_out2p0;
+
+
+// Output:0
+	ALBEDO = vec3(n_out4p0);
+
+
+}
+"
+nodes/fragment/2/node = SubResource("VisualShaderNodeLinearSceneDepth_hi0n7")
+nodes/fragment/2/position = Vector2(-280, 480)
+nodes/fragment/3/node = SubResource("VisualShaderNodeInput_cg6pa")
+nodes/fragment/3/position = Vector2(-480, 140)
+nodes/fragment/4/node = SubResource("VisualShaderNodeFloatOp_b1oji")
+nodes/fragment/4/position = Vector2(0, 240)
+nodes/fragment/connections = PackedInt32Array(3, 3, 4, 0, 2, 0, 4, 1, 4, 0, 0, 0)

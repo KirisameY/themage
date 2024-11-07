@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://b13e8ew7xgxtk"]
+
+[ext_resource type="Texture2D" uid="uid://cwj41s5ib6p8" path="res://Assets/Models/Blocks/GrassInstance.png" id="1_dkqug"]
+
+[resource]
+resource_name = "GrassInstance"
+albedo_color = Color(0.412152, 0.412152, 0.412152, 1)
+albedo_texture = ExtResource("1_dkqug")
+texture_filter = 0

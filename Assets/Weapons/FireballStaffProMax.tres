@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Weapon" load_steps=3 format=3 uid="uid://djhbtbtimhxt4"]
+
+[ext_resource type="PackedScene" uid="uid://b20so5ttcpexc" path="res://Scenes/Bullets/SmallFireball.tscn" id="1_8xohd"]
+[ext_resource type="Script" path="res://Scripts/Weapon.cs" id="2_dvfpy"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("2_dvfpy")
+BulletScene = ExtResource("1_8xohd")
+Warmup = 0.0
+Delay = 0.0
+Range = 100.0
+Level = 1
+IsTargetGround = false
+Data = {}

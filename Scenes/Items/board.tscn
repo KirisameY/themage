@@ -1,0 +1,62 @@
+[gd_scene load_steps=8 format=4 uid="uid://crmktmb86dm06"]
+
+[ext_resource type="PackedScene" uid="uid://dqw2ygpfya2dw" path="res://Scenes/Item.tscn" id="1_rqv86"]
+[ext_resource type="Script" path="res://Scripts/Items/Board.cs" id="2_83ff7"]
+[ext_resource type="Texture2D" uid="uid://blau7w2q7b3ys" path="res://Assets/Models/Blocks/Board_0.png" id="2_djsfh"]
+[ext_resource type="Texture2D" uid="uid://321gjowk7hst" path="res://Assets/Models/Blocks/Board_1.png" id="3_42tys"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8xld6"]
+resource_name = "m_fe1a656a-f128-e6cf-7855-b951cd3dc3ad"
+albedo_color = Color(0.622881, 0.622881, 0.622881, 1)
+albedo_texture = ExtResource("2_djsfh")
+texture_filter = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uey4i"]
+resource_name = "m_c1dcbc65-1c92-dd02-4f6a-2d6228d6a2ec"
+albedo_color = Color(0.593134, 0.593134, 0.593134, 1)
+albedo_texture = ExtResource("3_42tys")
+texture_filter = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_t4i3u"]
+_surfaces = [{
+"aabb": AABB(-0.5, 0, -0.0625, 1, 0.5, 0.0625),
+"attribute_data": PackedByteArray("/3//PwAA/z//fwAAAAAAAP+H/0f/f/9H/4f/B/9//wf/f/9/AAD/f/9//z8AAP8//4f/h/9//4f/h/9H/3//RwAA/3//f/9/AAD/h/9//4f/f/8H////B/9/AAD//wAA"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAgABAAMABAAFAAYABgAFAAcACAAJAAoACgAJAAsADAANAA4ADgANAA8AEAARABIAEgARABMAFAAVABYAFgAVABcA"),
+"material": SubResource("StandardMaterial3D_8xld6"),
+"name": "m_fe1a656a-f128-e6cf-7855-b951cd3dc3ad",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAAAAA/////wAAAAD//wAA//8AAP///////wAA/////wAAAAD/v///AAD///+//////wAA/7//////////v///AAD//wCAAAAAAP//AID///////8AgAAA/////wCAAAAAAP///78AAAAAAAD/vwAA//////+/AAD//wAA/7///////////wAA/////////////wAA//8AAP//AAD/////AAAAAAAAAAAAAAAAAAD//wAA//8AAAAAAAD//wAA/3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/f////3////9/////f////3////9/////f////3////9//7//f/+//3//v/9//7//f/8//3//P/9//z//f/8/")
+}, {
+"aabb": AABB(-0.0625, -0.5, -0.0625, 0.125, 0.5, 0.0625),
+"attribute_data": PackedByteArray("/x//fwAA/3//HwAAAAAAAP9P/3//P/9//08AAP8/AAD/P/9//x//f/8/AAD/HwAA/1//f/9P/3//XwAA/08AAP9fAAD/fwAA/1//D/9//w//X/8f/3//H/9f/w//f/8P"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAgABAAMABAAFAAYABgAFAAcACAAJAAoACgAJAAsADAANAA4ADgANAA8AEAARABIAEgARABMAFAAVABYAFgAVABcA"),
+"material": SubResource("StandardMaterial3D_uey4i"),
+"name": "m_c1dcbc65-1c92-dd02-4f6a-2d6228d6a2ec",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAAAAA/////wAAAAD//wAA//8AAP///////wAA/////wAAAAD/v///AAD///+//////wAA/7//////////v///AAD//wCAAAAAAP//AID///////8AgAAA/////wCAAAAAAP///78AAAAAAAD/vwAA//////+/AAD//wAA/7///////////wAA/////////////wAA//8AAP//AAD/////AAAAAAAAAAAAAAAAAAD//wAA//8AAAAAAAD//wAA/3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/f////3////9/////f////3////9/////f////3////9//7//f/+//3//v/9//7//f/8//3//P/9//z//f/8/")
+}]
+blend_shape_mode = 0
+
+[node name="Board" instance=ExtResource("1_rqv86")]
+script = ExtResource("2_83ff7")
+LabelText = ""
+
+[node name="Board" type="MeshInstance3D" parent="." index="1"]
+mesh = SubResource("ArrayMesh_t4i3u")
+
+[node name="Text" type="Label3D" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.697193, 0)
+visible = false
+billboard = 1
+no_depth_test = true
+text = "只是一个普普通通的告示牌"
+font_size = 60
+outline_size = 20

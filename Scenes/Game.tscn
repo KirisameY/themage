@@ -1,0 +1,337 @@
+[gd_scene load_steps=31 format=3 uid="uid://bumttdvbt0da8"]
+
+[ext_resource type="PackedScene" uid="uid://bb68gnxsxx8hy" path="res://Scenes/Map.tscn" id="1_gi0pr"]
+[ext_resource type="Script" path="res://Scripts/Game.cs" id="1_gs5qa"]
+[ext_resource type="MeshLibrary" uid="uid://jwuuuhrpfkcb" path="res://Assets/Blocks.tres" id="2_j05nu"]
+[ext_resource type="FastNoiseLite" uid="uid://buwnasnly01lv" path="res://Assets/Textures/Misc/Noise.res" id="3_btn51"]
+[ext_resource type="PackedScene" uid="uid://d2cd4cnoxpxhl" path="res://Scenes/Player.tscn" id="3_jfay1"]
+[ext_resource type="PackedScene" uid="uid://mf8xm258dscn" path="res://Scenes/Enemies/SlimeZero.tscn" id="4_v2fvr"]
+[ext_resource type="PackedScene" uid="uid://crmktmb86dm06" path="res://Scenes/Items/board.tscn" id="5_pp7ee"]
+[ext_resource type="Texture2D" uid="uid://ry4w41jqj4iv" path="res://Assets/Textures/Ui/UiButtonLs.png" id="6_1au52"]
+[ext_resource type="Texture2D" uid="uid://baahbg6inu8lc" path="res://Assets/Textures/Ui/UiButtonRt.png" id="7_wjpmk"]
+[ext_resource type="Texture2D" uid="uid://cre2865eob5g1" path="res://Assets/Textures/Ui/UiButtonLt.png" id="8_s37f0"]
+[ext_resource type="PackedScene" uid="uid://b20so5ttcpexc" path="res://Scenes/Bullets/SmallFireball.tscn" id="8_w10ov"]
+[ext_resource type="Script" path="res://Scripts/Weapon.cs" id="9_2ocny"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wu6kb"]
+sky_horizon_color = Color(0.619, 0.665825, 0.7025, 1)
+ground_bottom_color = Color(0, 0, 0, 1)
+ground_horizon_color = Color(0.619, 0.665825, 0.7025, 1)
+
+[sub_resource type="Sky" id="Sky_ottfx"]
+sky_material = SubResource("ProceduralSkyMaterial_wu6kb")
+
+[sub_resource type="Environment" id="Environment_ymbfg"]
+background_mode = 2
+sky = SubResource("Sky_ottfx")
+tonemap_mode = 2
+glow_enabled = true
+fog_enabled = true
+fog_mode = 1
+fog_density = 1.0
+fog_depth_curve = 0.482969
+fog_depth_begin = 20.0
+fog_depth_end = 50.0
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_j3b7v"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 30.0
+
+[sub_resource type="Shader" id="Shader_5yamw"]
+code = "shader_type spatial;
+render_mode specular_disabled;
+uniform sampler2D noiseTexture;
+uniform sampler2D noiseTexture2;
+uniform vec4 color:source_color;
+uniform sampler2D depth:hint_depth_texture;
+
+void vertex()
+{
+	vec3 vertex = VERTEX;
+	vec3 position = NODE_POSITION_WORLD;
+	UV = fract((position.xz + vertex.xz + vec2(TIME))/1000.);
+	vertex.y += (texture(noiseTexture,
+		fract((position.xz + vertex.xz + vec2(TIME))/1000.)).r);
+	VERTEX = vertex;
+}
+
+void fragment()
+{
+	// LinearSceneDepth:2
+		float log_depth = textureLod(depth, SCREEN_UV, 0.0).x;
+		vec4 depth_view = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, log_depth, 1.0);
+		depth_view.xyz /= depth_view.w;
+		float now_depth = -depth_view.z;
+
+	vec4 now_color = mix(vec4(vec3(pow((now_depth + VERTEX.z)/2.0,5.0)),color.a),color,0.2);
+	ALBEDO = (now_color.rgb)/2.0;
+	ALPHA = now_color.a;
+	NORMAL = vec3(1) - texture(noiseTexture2,UV).rgb;
+}
+
+void light()
+{
+	vec3 light = DIFFUSE_LIGHT;
+	light *= vec3(0.0,0.3,1.0);
+	DIFFUSE_LIGHT = light;
+}
+"
+
+[sub_resource type="Gradient" id="Gradient_xlk37"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_yuxnp"]
+width = 1000
+height = 1000
+seamless = true
+seamless_blend_skirt = 0.5
+color_ramp = SubResource("Gradient_xlk37")
+noise = ExtResource("3_btn51")
+
+[sub_resource type="Gradient" id="Gradient_353jy"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_geruq"]
+width = 1000
+height = 1000
+seamless = true
+seamless_blend_skirt = 0.5
+as_normal_map = true
+color_ramp = SubResource("Gradient_353jy")
+noise = ExtResource("3_btn51")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g8jqd"]
+resource_local_to_scene = true
+render_priority = 0
+shader = SubResource("Shader_5yamw")
+shader_parameter/color = Color(0, 0, 1, 0.8)
+shader_parameter/noiseTexture = SubResource("NoiseTexture2D_yuxnp")
+shader_parameter/noiseTexture2 = SubResource("NoiseTexture2D_geruq")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_juddp"]
+resource_local_to_scene = true
+material = SubResource("ShaderMaterial_g8jqd")
+size = Vector2(100, 100)
+subdivide_width = 1000
+subdivide_depth = 1000
+
+[sub_resource type="GDScript" id="GDScript_3oqdn"]
+script/source = "@tool
+extends MeshInstance3D
+func _physics_process(_delta: float) -> void:
+	global_position = Vector3(int(%Player.global_position.x),global_position.y,int(%Player.global_position.z))
+"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jyrro"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_3bwtb"]
+material = SubResource("StandardMaterial3D_jyrro")
+size = Vector2(200, 200)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_0y2iq"]
+vertices = PackedVector3Array(-5.5, 1.5, 1.5, -5.5, 1.5, 1.75, -5.25, 1.5, 1.75, -5.25, 1.5, -1.75, -5.5, 1.5, -1.75, -5.5, 1.5, -1.5, -5.75, 1.5, -1.5, -5.75, 1.5, -1.25, 15.5, 0.5, -4.75, 15.5, 0.5, -5.25, 14.75, 0.5, -5.25, -4.75, 1.5, -5.25, -5.25, 1.5, -5.25, -5.25, 1.5, -4.5, 14.75, 0.5, 5.5, 15.5, 0.5, 5.5, 15.5, 0.5, 4.75, -5.25, 1.5, 4.5, -5.25, 1.5, 5.5, -4.75, 1.5, 5.5, 15.5, 0.5, -4, -4, 1.5, -5.25, -4, 1.5, 5.5, 14, 0.5, 5.5, 15.5, 0.5, -3.5, 14, 0.5, -5.25, -3.5, 1.5, -5.25, -3.5, 1.5, 5.5, 15.5, 0.5, 4, 13.25, 0.5, 5.5, 5.5, 1.5, 5.5, 6.25, 1.5, 5.5, 6.25, 1.5, -5.25, 5.5, 1.5, -5.25, -5.25, 1.5, -3.5, -2.75, 1.5, -5.25, -5.25, 1.5, 3.5, -2.75, 1.5, 5.5, 2.25, 1.5, -5.25, 1.5, 1.5, -5.25, 13.25, 0.5, -5.25, -6.5, 1.5, -1.25, -6.5, 1.5, 1.5, 8.75, 0.5, 5.5, 9.5, 0.5, 5.5, 15.5, 0.5, 0, 4.25, 1.5, 5.5, 5, 1.5, 5.5, 5, 1.5, -5.25, 4.25, 1.5, -5.25, 1.5, 1.5, 5.5, 2.25, 1.5, 5.5, 12.75, 0.5, 5.5, 15.5, 0.5, 3.25, 9.5, 0.5, -5.25, 8.75, 0.5, -5.25, 12.75, 0.5, -5.25, 15.5, 0.5, -2.75, -2.25, 1.5, -5.25, 2.75, 1.5, 5.5, 2.75, 1.5, -5.25, -2.25, 1.5, 5.5, -5.25, 1.5, 2.5, 8, 1, -5.25, 8.48387, 0.5, -4.91129, 15.5, 0.5, 2.75, 12, 0.5, 5.5, -5.25, 1.5, -2.75, -1.5, 1.5, -5.25, 15.5, 0.5, -2.25, 12, 0.5, -5.25, 8, 1, 5.5, 8.48387, 0.5, 5.14516, 3.5, 1.5, -5.25, 3.5, 1.5, 5.5, 7.5, 1, -5.25, 7.75806, 1, -5.08065, 8.27419, 0.5, -4.74194, 7.83333, 1, -5.25, -1.5, 1.5, 5.5, 11.5, 0.5, 5.5, 15.5, 0.5, 2, -1, 1.5, -5.25, 11.5, 0.5, -5.25, 15.5, 0.5, -1.5, 7.5, 1, 5.5, 8.27419, 0.5, 4.96774, 7.75806, 1, 5.32258, 7.83333, 1, 5.5, 6.75, 1.5, -5.25, 7.31452, 1, -4.91129, 7.87903, 1, -4.57258, 8.44355, 0.5, -4.23387, -0.25, 1.5, -5.25, -1, 1.5, 5.5, 15.5, 0.5, 1.25, 10.75, 0.5, 5.5, 15.5, 0.5, -0.75, 10.75, 0.5, -5.25, -0.25, 1.5, 5.5, 6.75, 1.5, 5.5, 8.44355, 0.5, 4.43548, 7.87903, 1, 4.79032, 7.31452, 1, 5.14516, 0.25, 1.5, -5.25, 8.22524, 0.5, -3.75526, 7.77129, 1, -1.99938, 8.25654, 0.5, -1.76865, 6.725, 1.5, -4.775, 7.26529, 1, -3.51131, 6.77406, 1.5, 0.22765, 7.27156, 1, 2.25198, 8.26136, 0.5, 1.97618, 6.76505, 1.5, -4.23105, 7.23507, 1, -4.25908, 7.74514, 1, -3.99315, 7.24731, 1, -1.01548, 7.77334, 1, -0.231575, 7.23869, 1, -0.0129499, 6.7477, 1.5, 3.99575, 7.26281, 1, 4.24464, 7.74158, 1, 2.27395, 7.73018, 1, 0.99945, 7.22982, 1, 0.769837, 7.73531, 1, -3.48934, 7.77177, 1, -1.5099, 7.73283, 1, 4.26661, 8.24267, 0.5, 3.76279, 7.76736, 1, 3.23811, 7.26749, 1, 3.49798, 0.25, 1.5, 5.5, 10.25, 0.5, 5.5, 15.5, 0.5, 0.5, 10.25, 0.5, -5.25, 1, 1.5, -5.25, 1, 1.5, 5.5, -13.5, 1.5, 13.75, -13.25, 1.5, 13.75, -13.25, 1.5, 13.5, -7.5, 1.5, 1.75, -7.25, 1.5, 1.75, -7.25, 1.5, 1.5, -7.25, 1.5, -1.25, -7.25, 1.5, -1.5, -7.5, 1.5, -1.5, -19.5, 1.5, 13.5, -19.5, 1.5, 13.75, -19.25, 1.5, 13.75, -7.5, 1.5, -3.75, -7.5, 1.5, -4.25, -8.25, 1.5, -4.25, -25.25, 1.5, 12.75, -25.25, 1.5, 13.5, -24.75, 1.5, 13.5, -8.25, 1.5, 13.5, -7.5, 1.5, 13.5, -7.5, 1.5, 12.75, -8.75, 1.5, -4.25, -7.5, 1.5, -3, -25.25, 1.5, 12.25, -24, 1.5, 13.5, -24.25, 1.5, -4.25, -25.25, 1.5, -4.25, -25.25, 1.5, -3.25, -9, 1.5, 13.5, -7.5, 1.5, 4.5, -7.5, 1.5, 3.75, -18.75, 1.5, -4.25, -19.5, 1.5, -4.25, -25.25, 1.5, 0, -25.25, 1.5, 1, -7.5, 1.5, 12, -9.75, 1.5, 13.5, -23.25, 1.5, -4.25, -7.5, 1.5, -2.25, -9.75, 1.5, -4.25, -23.25, 1.5, 13.5, -25.25, 1.5, 11.25, -14.25, 1.5, -4.25, -15, 1.5, -4.25, -25.25, 1.5, -2.25, -22.25, 1.5, -4.25, -15.5, 1.5, -4.25, -16.5, 1.5, -4.25, -17.25, 1.5, -4.25, -7.5, 1.5, 8.25, -7.5, 1.5, 7.5, -25.25, 1.5, 7.75, -20.25, 1.5, 13.5, -25.25, 1.5, 6.75, -7.5, 1.5, 11.25, -10.5, 1.5, 13.5, -25.25, 1.5, 1.5, -10.5, 1.5, -4.25, -22.5, 1.5, 13.5, -25.25, 1.5, 10.5, -25.25, 1.5, 3.75, -25.25, 1.5, 4.5, -7.5, 1.5, 6.75, -21.75, 1.5, -4.25, -25.25, 1.5, -1.25, -25.25, 1.5, 2.25, -17.75, 1.5, -4.25, -7.5, 1.5, 10.5, -11.25, 1.5, 13.5, -11, 1.5, -4.25, -25.25, 1.5, 10, -21.75, 1.5, 13.5, -7.5, 1.5, 6, -25.25, 1.5, 6, -25.25, 1.5, -0.75, -21, 1.5, -4.25, -25.25, 1.5, 5.5, -12, 1.5, -4.25, -7.5, 1.5, 9.75, -12, 1.5, 13.5, -7.5, 1.5, 2.25, -21, 1.5, 13.5, -19.25, 2.5, 15.5, -13.5, 2.5, 15.5, -13.5, 1.5, 14.5, -19.25, 1.5, 14.5, -19.25, 1.5, 14.9, -19.25, 2.5, 15.1, -13.5, 2.5, 15.1, -13.5, 1.5, 14.9, -15.2348, 2.5, 14.9788, -18.775, 2.5, 14.975, -14.0098, 2.5, 14.9838, -25.25, 1.5, 3.25, -7.5, 1.5, 3, -7.5, 1.5, 5.25, -12.75, 1.5, -4.25, -20, 1.5, -4.25, -25.25, 1.5, 9, -7.5, 1.5, 9, -12.75, 1.5, 13.5, -13.25, 1.5, -4.25, -25.25, 1.5, 8.25, -19.25, 1.5, 40.5, -19.25, 1.5, 41.5, -18.75, 1.5, 41.5, -14.25, 1.5, 41.5, -13.5, 1.5, 41.5, -13.5, 1.5, 40.5, -18, 1.5, 41.5, -19.25, 1.5, 39.75, -15, 1.5, 41.5, -13.5, 1.5, 39.75, -19.25, 1.5, 30.75, -19.25, 1.5, 31.75, -13.5, 1.5, 31.75, -13.5, 1.5, 30.75, -13.5, 2.5, 19.5, -13.5, 1.5, 18.75, -19.25, 1.5, 18.75, -19.25, 2.5, 19.5, -13.5, 2.5, 19.125, -13.5, 1.5, 18.9375, -19.25, 1.5, 18.9375, -19.25, 2.5, 19.125, -17.25, 1.5, 41.5, -19.25, 2.5, 39, -19.25, 2.25, 39.1875, -19.25, 1.5, 39.375, -18.9423, 1.5, 39.3846, -19.0962, 2.25, 39.1923, -15.75, 1.5, 41.5, -13.5, 2.5, 39, -13.6607, 2.25, 39.1786, -13.8214, 1.5, 39.3571, -13.5, 1.5, 39.375, -13.5, 2.25, 39.1875, -19.25, 2.5, 30, -13.5, 2.5, 30, -19.25, 2.25, 30.1875, -19.25, 1.5, 30.375, -13.5, 1.5, 30.375, -13.5, 2.25, 30.1875, -19.25, 2.5, 26.75, -19.25, 1.5, 27.5, -13.5, 1.5, 27.5, -13.5, 2.5, 26.75, -19.25, 2.25, 27.125, -19.25, 1.5, 27.3125, -13.5, 1.5, 27.3125, -13.5, 2.25, 27.125, -16.5, 1.5, 41.5, -19.25, 2.5, 38.25, -19.25, 2.5, 38.8125, -18.3333, 1.5, 39.3333, -18.6389, 2.5, 38.9722, -13.5, 2.5, 38.25, -14.1667, 2.5, 38.9722, -14.5, 1.5, 39.3333, -13.5, 2.5, 38.8125, -19.25, 2.5, 29.25, -13.5, 2.5, 29.25, -19.25, 2.5, 29.8125, -13.5, 2.5, 29.8125, -19.25, 1.5, 28.5, -13.5, 1.5, 28.5, -19.25, 1.5, 37.25, -17.9405, 1.5, 39.2738, -18.2024, 2.5, 38.869, -18.7262, 2.5, 38.0595, -18.8571, 1.5, 37.8571, -19.25, 1.5, 37.85, -19.25, 2.5, 38.05, -13.5, 1.5, 37.25, -13.9286, 1.5, 37.8571, -14.0714, 2.5, 38.0595, -14.6429, 2.5, 38.869, -14.9286, 1.5, 39.2738, -13.5, 2.5, 38.05, -13.5, 1.5, 37.85, -19.25, 1.5, 36.5, -13.5, 1.5, 36.5, -18.2491, 2.5, 37.999, -18.2593, 1.5, 37.7732, -17.4941, 2.5, 37.982, -17.2692, 1.5, 37.7672, -16.4788, 2.5, 38.2407, -15.5242, 1.5, 37.7441, -15.2636, 2.5, 38.4995, -15.514, 2.5, 38.0199, -17.7436, 2.5, 38.7715, -16.504, 2.5, 37.9759, -16.7535, 2.5, 38.7654, -16.7683, 1.5, 39.2462, -16.0134, 2.25, 39.0192, -16.0132, 1.5, 39.2291, -17.024, 2.5, 38.004, -15.2583, 2.25, 39.0022, -17.2384, 2.25, 39.0143, -16.7684, 2.25, 38.9863, -17.2736, 2.5, 38.7435, -15.9985, 2.5, 38.7484, -15.229, 2.5, 37.9809, -19.25, 2.25, 16.25, -13.5, 2.25, 16.25, -13.5, 2.5, 15.875, -19.25, 2.5, 15.875, -13.5, 1.5, 21, -13.5, 2.25, 20.25, -19.25, 2.25, 20.25, -19.25, 1.5, 21, -19.25, 1.5, 28.875, -19.25, 2.5, 29.0625, -13.5, 2.5, 29.0625, -13.5, 1.5, 28.875, -19.25, 2.5, 19.875, -13.5, 2.5, 19.875, -19.25, 1.5, 35.75, -13.5, 1.5, 35.75, -13.5, 2.5, 22.75, -13.5, 2.5, 22, -19.25, 2.5, 22, -19.25, 2.5, 22.75, -19.25, 1.5, 35, -13.5, 1.5, 35, -13.5, 1.5, 23.5, -19.25, 1.5, 23.5, -13.5, 1.5, 23.3125, -13.5, 2.25, 23.125, -19.25, 2.25, 23.125, -19.25, 1.5, 23.3125, -13.5, 1.5, 17, -19.25, 1.5, 17, -13.5, 2.5, 24.25, -19.25, 2.5, 24.25, -13.5, 2.5, 24.0625, -13.5, 1.5, 23.875, -19.25, 1.5, 23.875, -19.25, 2.5, 24.0625, -13.5, 1.5, 17.75, -19.25, 1.5, 17.75, -19.25, 1.5, 21.8, -13.5, 1.5, 21.8, -19.25, 2.5, 34, -13.5, 2.5, 34, -19.25, 2.25, 34.2, -19.25, 1.5, 34.4, -13.5, 1.5, 34.4, -13.5, 2.25, 34.2, -19.25, 2.5, 33.25, -13.5, 2.5, 33.25, -19.25, 2.5, 33.8125, -13.5, 2.5, 33.8125, -19.25, 2.25, 25.25, -13.5, 2.25, 25.25, -19.25, 2.5, 24.85, -13.5, 2.5, 24.85, -19.25, 1.5, 32.5, -13.5, 1.5, 32.5, -19.25, 1.5, 32.875, -19.25, 2.5, 33.0625, -13.5, 2.5, 33.0625, -13.5, 1.5, 32.875, -13.5, 2.5, 26, -19.25, 2.5, 26, -13.5, 1.5, 25.8125, -19.25, 1.5, 25.8125)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(5, 4, 3), PackedInt32Array(6, 5, 7), PackedInt32Array(7, 5, 0), PackedInt32Array(10, 9, 8), PackedInt32Array(13, 12, 11), PackedInt32Array(16, 15, 14), PackedInt32Array(19, 18, 17), PackedInt32Array(10, 8, 20), PackedInt32Array(13, 11, 21), PackedInt32Array(22, 19, 17), PackedInt32Array(16, 14, 23), PackedInt32Array(20, 24, 10), PackedInt32Array(10, 24, 25), PackedInt32Array(13, 21, 26), PackedInt32Array(27, 22, 17), PackedInt32Array(16, 23, 28), PackedInt32Array(28, 23, 29), PackedInt32Array(33, 32, 30), PackedInt32Array(30, 32, 31), PackedInt32Array(26, 35, 13), PackedInt32Array(13, 35, 34), PackedInt32Array(27, 17, 37), PackedInt32Array(37, 17, 36), PackedInt32Array(39, 38, 3), PackedInt32Array(40, 25, 24), PackedInt32Array(41, 7, 42), PackedInt32Array(42, 7, 0), PackedInt32Array(45, 44, 43), PackedInt32Array(49, 48, 3), PackedInt32Array(3, 48, 2), PackedInt32Array(2, 48, 46), PackedInt32Array(46, 48, 47), PackedInt32Array(51, 50, 2), PackedInt32Array(29, 52, 28), PackedInt32Array(28, 52, 53), PackedInt32Array(55, 54, 45), PackedInt32Array(40, 24, 56), PackedInt32Array(56, 24, 57), PackedInt32Array(5, 3, 0), PackedInt32Array(0, 3, 2), PackedInt32Array(34, 35, 58), PackedInt32Array(59, 51, 2), PackedInt32Array(3, 38, 60), PackedInt32Array(37, 36, 61), PackedInt32Array(61, 36, 62), PackedInt32Array(63, 55, 64), PackedInt32Array(64, 55, 45), PackedInt32Array(53, 52, 65), PackedInt32Array(65, 52, 66), PackedInt32Array(34, 58, 67), PackedInt32Array(67, 58, 68), PackedInt32Array(57, 69, 56), PackedInt32Array(56, 69, 70), PackedInt32Array(71, 72, 43), PackedInt32Array(43, 72, 45), PackedInt32Array(3, 60, 73), PackedInt32Array(74, 59, 2), PackedInt32Array(75, 78, 76), PackedInt32Array(76, 78, 63), PackedInt32Array(76, 63, 77), PackedInt32Array(77, 63, 64), PackedInt32Array(77, 64, 45), PackedInt32Array(62, 2, 61), PackedInt32Array(61, 2, 79), PackedInt32Array(66, 80, 65), PackedInt32Array(65, 80, 81), PackedInt32Array(67, 68, 82), PackedInt32Array(70, 69, 83), PackedInt32Array(83, 69, 84), PackedInt32Array(85, 87, 88), PackedInt32Array(88, 87, 71), PackedInt32Array(71, 87, 86), PackedInt32Array(71, 86, 72), PackedInt32Array(72, 86, 45), PackedInt32Array(3, 73, 49), PackedInt32Array(89, 75, 90), PackedInt32Array(90, 75, 76), PackedInt32Array(90, 76, 91), PackedInt32Array(91, 76, 77), PackedInt32Array(91, 77, 92), PackedInt32Array(92, 77, 45), PackedInt32Array(82, 93, 67), PackedInt32Array(67, 93, 3), PackedInt32Array(94, 79, 2), PackedInt32Array(81, 80, 95), PackedInt32Array(95, 80, 96), PackedInt32Array(84, 97, 83), PackedInt32Array(83, 97, 98), PackedInt32Array(46, 74, 2), PackedInt32Array(99, 94, 2), PackedInt32Array(100, 103, 85), PackedInt32Array(85, 103, 87), PackedInt32Array(87, 103, 102), PackedInt32Array(87, 102, 86), PackedInt32Array(86, 102, 101), PackedInt32Array(86, 101, 45), PackedInt32Array(3, 93, 104), PackedInt32Array(31, 119, 100), PackedInt32Array(100, 119, 103), PackedInt32Array(103, 120, 102), PackedInt32Array(102, 126, 101), PackedInt32Array(101, 127, 45), PackedInt32Array(45, 107, 92), PackedInt32Array(92, 115, 91), PackedInt32Array(91, 114, 90), PackedInt32Array(90, 108, 89), PackedInt32Array(89, 108, 32), PackedInt32Array(32, 110, 31), PackedInt32Array(31, 110, 119), PackedInt32Array(119, 120, 103), PackedInt32Array(120, 126, 102), PackedInt32Array(126, 127, 101), PackedInt32Array(127, 112, 45), PackedInt32Array(107, 105, 92), PackedInt32Array(45, 112, 107), PackedInt32Array(115, 114, 91), PackedInt32Array(92, 105, 115), PackedInt32Array(114, 108, 90), PackedInt32Array(108, 113, 32), PackedInt32Array(32, 113, 110), PackedInt32Array(110, 111, 119), PackedInt32Array(119, 129, 120), PackedInt32Array(120, 129, 126), PackedInt32Array(126, 128, 127), PackedInt32Array(127, 128, 112), PackedInt32Array(107, 124, 105), PackedInt32Array(112, 117, 107), PackedInt32Array(115, 109, 114), PackedInt32Array(105, 124, 115), PackedInt32Array(114, 113, 108), PackedInt32Array(113, 116, 110), PackedInt32Array(111, 129, 119), PackedInt32Array(110, 123, 111), PackedInt32Array(129, 128, 126), PackedInt32Array(128, 121, 112), PackedInt32Array(107, 106, 124), PackedInt32Array(117, 125, 107), PackedInt32Array(112, 122, 117), PackedInt32Array(109, 113, 114), PackedInt32Array(115, 124, 109), PackedInt32Array(116, 118, 110), PackedInt32Array(113, 109, 116), PackedInt32Array(111, 128, 129), PackedInt32Array(123, 122, 111), PackedInt32Array(110, 118, 123), PackedInt32Array(121, 122, 112), PackedInt32Array(128, 111, 121), PackedInt32Array(106, 109, 124), PackedInt32Array(107, 125, 106), PackedInt32Array(117, 116, 125), PackedInt32Array(122, 118, 117), PackedInt32Array(116, 117, 118), PackedInt32Array(109, 106, 116), PackedInt32Array(122, 121, 111), PackedInt32Array(123, 118, 122), PackedInt32Array(125, 116, 106), PackedInt32Array(130, 99, 2), PackedInt32Array(96, 131, 95), PackedInt32Array(95, 131, 132), PackedInt32Array(133, 98, 97), PackedInt32Array(3, 104, 134), PackedInt32Array(48, 33, 47), PackedInt32Array(47, 33, 30), PackedInt32Array(135, 130, 2), PackedInt32Array(97, 45, 133), PackedInt32Array(133, 45, 54), PackedInt32Array(132, 131, 45), PackedInt32Array(45, 131, 44), PackedInt32Array(3, 134, 39), PackedInt32Array(50, 135, 2), PackedInt32Array(138, 137, 136), PackedInt32Array(141, 140, 139), PackedInt32Array(144, 143, 142), PackedInt32Array(147, 146, 145), PackedInt32Array(150, 149, 148), PackedInt32Array(153, 152, 151), PackedInt32Array(156, 155, 154), PackedInt32Array(150, 148, 157), PackedInt32Array(157, 148, 158), PackedInt32Array(151, 159, 153), PackedInt32Array(153, 159, 160), PackedInt32Array(163, 162, 161), PackedInt32Array(156, 154, 164), PackedInt32Array(166, 165, 138), PackedInt32Array(168, 167, 169), PackedInt32Array(169, 167, 170), PackedInt32Array(156, 164, 171), PackedInt32Array(171, 164, 172), PackedInt32Array(163, 161, 173), PackedInt32Array(158, 174, 157), PackedInt32Array(157, 174, 175), PackedInt32Array(160, 159, 176), PackedInt32Array(176, 159, 177), PackedInt32Array(179, 178, 144), PackedInt32Array(163, 173, 180), PackedInt32Array(180, 173, 181), PackedInt32Array(142, 41, 141), PackedInt32Array(141, 41, 42), PackedInt32Array(182, 179, 144), PackedInt32Array(141, 139, 142), PackedInt32Array(142, 139, 144), PackedInt32Array(144, 139, 183), PackedInt32Array(183, 139, 184), PackedInt32Array(186, 185, 138), PackedInt32Array(188, 187, 145), PackedInt32Array(145, 187, 189), PackedInt32Array(171, 172, 190), PackedInt32Array(190, 172, 191), PackedInt32Array(192, 170, 167), PackedInt32Array(174, 144, 175), PackedInt32Array(175, 144, 193), PackedInt32Array(176, 177, 194), PackedInt32Array(194, 177, 195), PackedInt32Array(145, 197, 196), PackedInt32Array(198, 186, 138), PackedInt32Array(181, 199, 180), PackedInt32Array(180, 199, 200), PackedInt32Array(183, 182, 144), PackedInt32Array(192, 167, 201), PackedInt32Array(201, 167, 202), PackedInt32Array(190, 191, 203), PackedInt32Array(203, 191, 204), PackedInt32Array(205, 193, 144), PackedInt32Array(195, 206, 194), PackedInt32Array(194, 206, 207), PackedInt32Array(208, 198, 138), PackedInt32Array(145, 189, 209), PackedInt32Array(200, 199, 210), PackedInt32Array(210, 199, 211), PackedInt32Array(145, 209, 212), PackedInt32Array(213, 205, 144), PackedInt32Array(203, 204, 214), PackedInt32Array(214, 204, 215), PackedInt32Array(184, 139, 216), PackedInt32Array(217, 207, 206), PackedInt32Array(220, 226, 221), PackedInt32Array(221, 227, 222), PackedInt32Array(222, 227, 223), PackedInt32Array(223, 227, 218), PackedInt32Array(218, 226, 219), PackedInt32Array(219, 228, 224), PackedInt32Array(224, 228, 225), PackedInt32Array(225, 228, 220), PackedInt32Array(226, 227, 221), PackedInt32Array(220, 228, 226), PackedInt32Array(227, 226, 218), PackedInt32Array(226, 228, 219), PackedInt32Array(202, 184, 201), PackedInt32Array(201, 184, 229), PackedInt32Array(136, 220, 147), PackedInt32Array(147, 220, 221), PackedInt32Array(230, 166, 138), PackedInt32Array(231, 208, 138), PackedInt32Array(232, 213, 144), PackedInt32Array(147, 145, 136), PackedInt32Array(136, 145, 138), PackedInt32Array(210, 211, 169), PackedInt32Array(169, 211, 233), PackedInt32Array(217, 206, 188), PackedInt32Array(188, 206, 234), PackedInt32Array(165, 231, 138), PackedInt32Array(214, 215, 235), PackedInt32Array(235, 215, 236), PackedInt32Array(237, 232, 144), PackedInt32Array(216, 230, 184), PackedInt32Array(184, 230, 196), PackedInt32Array(196, 230, 145), PackedInt32Array(145, 230, 138), PackedInt32Array(145, 212, 197), PackedInt32Array(196, 229, 184), PackedInt32Array(169, 233, 168), PackedInt32Array(188, 234, 238), PackedInt32Array(144, 178, 237), PackedInt32Array(236, 138, 235), PackedInt32Array(235, 138, 185), PackedInt32Array(188, 238, 187), PackedInt32Array(241, 240, 239), PackedInt32Array(244, 243, 242), PackedInt32Array(241, 239, 245), PackedInt32Array(245, 239, 246), PackedInt32Array(242, 247, 244), PackedInt32Array(244, 247, 248), PackedInt32Array(252, 251, 249), PackedInt32Array(249, 251, 250), PackedInt32Array(254, 258, 255), PackedInt32Array(255, 258, 259), PackedInt32Array(259, 258, 257), PackedInt32Array(259, 257, 260), PackedInt32Array(260, 257, 253), PackedInt32Array(260, 253, 256), PackedInt32Array(262, 266, 263), PackedInt32Array(263, 266, 264), PackedInt32Array(264, 266, 265), PackedInt32Array(264, 265, 246), PackedInt32Array(246, 265, 245), PackedInt32Array(245, 265, 261), PackedInt32Array(268, 272, 269), PackedInt32Array(269, 272, 271), PackedInt32Array(269, 271, 270), PackedInt32Array(270, 271, 248), PackedInt32Array(270, 248, 247), PackedInt32Array(270, 247, 267), PackedInt32Array(274, 278, 273), PackedInt32Array(273, 278, 275), PackedInt32Array(275, 278, 277), PackedInt32Array(275, 277, 276), PackedInt32Array(276, 277, 252), PackedInt32Array(276, 252, 249), PackedInt32Array(280, 284, 281), PackedInt32Array(281, 284, 285), PackedInt32Array(285, 284, 283), PackedInt32Array(285, 283, 286), PackedInt32Array(286, 283, 279), PackedInt32Array(286, 279, 282), PackedInt32Array(262, 289, 266), PackedInt32Array(266, 289, 265), PackedInt32Array(265, 289, 288), PackedInt32Array(265, 288, 291), PackedInt32Array(265, 291, 290), PackedInt32Array(265, 290, 261), PackedInt32Array(261, 290, 287), PackedInt32Array(268, 269, 295), PackedInt32Array(295, 269, 270), PackedInt32Array(295, 270, 292), PackedInt32Array(292, 270, 293), PackedInt32Array(293, 270, 294), PackedInt32Array(294, 270, 267), PackedInt32Array(294, 267, 287), PackedInt32Array(273, 298, 274), PackedInt32Array(274, 298, 299), PackedInt32Array(299, 298, 296), PackedInt32Array(299, 296, 297), PackedInt32Array(281, 301, 280), PackedInt32Array(280, 301, 300), PackedInt32Array(302, 306, 307), PackedInt32Array(307, 306, 308), PackedInt32Array(308, 306, 288), PackedInt32Array(288, 306, 305), PackedInt32Array(288, 305, 291), PackedInt32Array(291, 305, 304), PackedInt32Array(291, 304, 290), PackedInt32Array(290, 304, 303), PackedInt32Array(290, 303, 287), PackedInt32Array(309, 315, 310), PackedInt32Array(310, 315, 314), PackedInt32Array(310, 314, 292), PackedInt32Array(310, 292, 311), PackedInt32Array(311, 292, 293), PackedInt32Array(311, 293, 312), PackedInt32Array(312, 293, 294), PackedInt32Array(312, 294, 313), PackedInt32Array(313, 294, 287), PackedInt32Array(309, 323, 317), PackedInt32Array(317, 323, 316), PackedInt32Array(316, 319, 302), PackedInt32Array(302, 319, 306), PackedInt32Array(306, 319, 305), PackedInt32Array(305, 318, 304), PackedInt32Array(304, 326, 303), PackedInt32Array(303, 329, 287), PackedInt32Array(287, 331, 313), PackedInt32Array(313, 333, 312), PackedInt32Array(312, 338, 311), PackedInt32Array(311, 338, 310), PackedInt32Array(310, 323, 309), PackedInt32Array(323, 321, 316), PackedInt32Array(316, 321, 319), PackedInt32Array(319, 318, 305), PackedInt32Array(318, 326, 304), PackedInt32Array(326, 334, 303), PackedInt32Array(329, 331, 287), PackedInt32Array(303, 334, 329), PackedInt32Array(331, 333, 313), PackedInt32Array(333, 324, 312), PackedInt32Array(312, 324, 338), PackedInt32Array(338, 323, 310), PackedInt32Array(323, 327, 321), PackedInt32Array(321, 320, 319), PackedInt32Array(319, 320, 318), PackedInt32Array(318, 320, 326), PackedInt32Array(326, 336, 334), PackedInt32Array(329, 330, 331), PackedInt32Array(334, 335, 329), PackedInt32Array(331, 330, 333), PackedInt32Array(333, 337, 324), PackedInt32Array(324, 325, 338), PackedInt32Array(338, 325, 323), PackedInt32Array(327, 332, 321), PackedInt32Array(323, 325, 327), PackedInt32Array(321, 332, 320), PackedInt32Array(320, 336, 326), PackedInt32Array(336, 328, 334), PackedInt32Array(329, 335, 330), PackedInt32Array(334, 328, 335), PackedInt32Array(330, 337, 333), PackedInt32Array(337, 325, 324), PackedInt32Array(327, 322, 332), PackedInt32Array(325, 322, 327), PackedInt32Array(332, 336, 320), PackedInt32Array(336, 332, 328), PackedInt32Array(335, 328, 330), PackedInt32Array(330, 328, 337), PackedInt32Array(337, 322, 325), PackedInt32Array(322, 328, 332), PackedInt32Array(328, 322, 337), PackedInt32Array(340, 339, 341), PackedInt32Array(341, 339, 342), PackedInt32Array(341, 342, 218), PackedInt32Array(341, 218, 219), PackedInt32Array(346, 345, 343), PackedInt32Array(343, 345, 344), PackedInt32Array(296, 348, 297), PackedInt32Array(297, 348, 349), PackedInt32Array(349, 348, 347), PackedInt32Array(349, 347, 350), PackedInt32Array(350, 347, 300), PackedInt32Array(350, 300, 301), PackedInt32Array(253, 352, 256), PackedInt32Array(256, 352, 351), PackedInt32Array(351, 352, 344), PackedInt32Array(351, 344, 345), PackedInt32Array(354, 317, 353), PackedInt32Array(353, 317, 316), PackedInt32Array(358, 357, 355), PackedInt32Array(355, 357, 356), PackedInt32Array(360, 354, 359), PackedInt32Array(359, 354, 353), PackedInt32Array(362, 366, 361), PackedInt32Array(361, 366, 363), PackedInt32Array(363, 366, 365), PackedInt32Array(363, 365, 364), PackedInt32Array(364, 365, 358), PackedInt32Array(364, 358, 355), PackedInt32Array(368, 339, 367), PackedInt32Array(367, 339, 340), PackedInt32Array(370, 374, 369), PackedInt32Array(369, 374, 371), PackedInt32Array(371, 374, 373), PackedInt32Array(371, 373, 372), PackedInt32Array(372, 373, 362), PackedInt32Array(372, 362, 361), PackedInt32Array(376, 368, 375), PackedInt32Array(375, 368, 367), PackedInt32Array(357, 377, 356), PackedInt32Array(356, 377, 378), PackedInt32Array(378, 377, 346), PackedInt32Array(378, 346, 343), PackedInt32Array(380, 384, 379), PackedInt32Array(379, 384, 381), PackedInt32Array(381, 384, 383), PackedInt32Array(381, 383, 382), PackedInt32Array(382, 383, 360), PackedInt32Array(382, 360, 359), PackedInt32Array(255, 376, 254), PackedInt32Array(254, 376, 375), PackedInt32Array(379, 387, 380), PackedInt32Array(380, 387, 388), PackedInt32Array(388, 387, 385), PackedInt32Array(388, 385, 386), PackedInt32Array(389, 391, 390), PackedInt32Array(390, 391, 392), PackedInt32Array(392, 391, 370), PackedInt32Array(392, 370, 369), PackedInt32Array(385, 396, 386), PackedInt32Array(386, 396, 397), PackedInt32Array(397, 396, 395), PackedInt32Array(397, 395, 398), PackedInt32Array(398, 395, 393), PackedInt32Array(398, 393, 394), PackedInt32Array(400, 402, 399), PackedInt32Array(399, 402, 401), PackedInt32Array(401, 402, 389), PackedInt32Array(401, 389, 390), PackedInt32Array(251, 394, 250), PackedInt32Array(250, 394, 393), PackedInt32Array(279, 400, 282), PackedInt32Array(282, 400, 399)]
+geometry_parsed_geometry_type = 1
+geometry_source_geometry_mode = 2
+geometry_source_group_name = &"Map"
+agent_height = 1.0
+agent_max_climb = 1.0
+agent_max_slope = 90.0
+edge_max_length = 1.0
+edge_max_error = 0.1
+detail_sample_distance = 1.0
+detail_sample_max_error = 0.5
+filter_ledge_spans = true
+
+[sub_resource type="Resource" id="Resource_4h3dx"]
+resource_local_to_scene = true
+script = ExtResource("9_2ocny")
+BulletScene = ExtResource("8_w10ov")
+Warmup = 0.0
+Delay = 1.0
+Range = 100.0
+Level = 1
+IsTargetGround = false
+Data = {}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6hno6"]
+bg_color = Color(0.329412, 0.329412, 0.329412, 0.466667)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e6xmv"]
+bg_color = Color(1, 0, 0, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1_gs5qa")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-4.37114e-08, -0.93358, 0.358368, 0, 0.358368, 0.93358, -1, 4.08081e-08, -1.56648e-08, 0, 0, 0)
+shadow_enabled = true
+metadata/_edit_lock_ = true
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ymbfg")
+camera_attributes = SubResource("CameraAttributesPractical_j3b7v")
+
+[node name="Water" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_juddp")
+skeleton = NodePath("../MapObjects")
+script = SubResource("GDScript_3oqdn")
+
+[node name="Back" type="MeshInstance3D" parent="Water"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+mesh = SubResource("PlaneMesh_3bwtb")
+
+[node name="MapObjects" type="Node3D" parent="."]
+unique_name_in_owner = true
+metadata/_edit_lock_ = true
+
+[node name="Navigation" type="NavigationRegion3D" parent="MapObjects"]
+visible = false
+navigation_mesh = SubResource("NavigationMesh_0y2iq")
+navigation_layers = 5
+
+[node name="Map" parent="MapObjects" groups=["Map"] instance=ExtResource("1_gi0pr")]
+mesh_library = ExtResource("2_j05nu")
+cell_size = Vector3(1, 1, 1)
+collision_mask = 0
+bake_navigation = true
+data = {
+"cells": PackedInt32Array(65535, 65535, 0, 0, 65535, 0, 0, 0, 0, 65535, 0, 0, 65535, 65534, 0, 0, 65534, 0, 1, 65535, 0, 1, 65534, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0, 0, 2, 0, 0, 1, 0, 65535, 1, 0, 65535, 2, 0, 65534, 2, 0, 65534, 1, 0, 65534, 0, 0, 65534, 65535, 0, 65534, 65534, 0, 65534, 65533, 0, 65535, 65533, 0, 0, 65533, 0, 1, 65533, 0, 2, 65533, 0, 2, 65534, 0, 2, 65535, 0, 2, 0, 0, 2, 1, 0, 2, 2, 0, 1, 3, 0, 2, 3, 0, 0, 3, 0, 65535, 3, 0, 65534, 3, 0, 65533, 3, 0, 65533, 2, 0, 65533, 1, 0, 65533, 0, 0, 65533, 65533, 0, 65533, 65534, 0, 65533, 65535, 0, 3, 3, 0, 3, 2, 0, 3, 1, 0, 3, 0, 0, 3, 65535, 0, 3, 65534, 0, 3, 65533, 0, 3, 65532, 0, 2, 65532, 0, 1, 65532, 0, 0, 65532, 0, 65535, 65532, 0, 65534, 65532, 0, 65533, 65532, 0, 65532, 65532, 0, 65532, 65533, 0, 65532, 65534, 0, 65532, 65535, 0, 65532, 0, 0, 65532, 1, 0, 65531, 1, 0, 65531, 2, 0, 65532, 2, 0, 65532, 3, 0, 65531, 3, 0, 65531, 0, 0, 65531, 65535, 0, 65531, 65534, 0, 65531, 65533, 0, 65531, 65532, 0, 4, 3, 0, 4, 2, 0, 4, 1, 0, 4, 0, 0, 4, 65532, 0, 4, 65533, 0, 4, 65534, 0, 4, 65535, 0, 4, 4, 0, 3, 4, 0, 2, 4, 0, 1, 4, 0, 0, 4, 0, 65535, 4, 0, 65534, 4, 0, 65532, 4, 0, 65531, 4, 0, 65533, 4, 0, 65531, 65531, 0, 65532, 65531, 0, 65533, 65531, 0, 65534, 65531, 0, 65535, 65531, 0, 0, 65531, 0, 1, 65531, 0, 2, 65531, 0, 3, 65531, 0, 4, 65531, 0, 4, 65530, 0, 3, 65530, 0, 2, 65530, 0, 1, 65530, 0, 0, 65530, 0, 65535, 65530, 0, 65534, 65530, 0, 65533, 65530, 0, 65532, 65530, 0, 65531, 65530, 0, 4, 65529, 0, 3, 65529, 0, 2, 65529, 0, 1, 65529, 0, 0, 65529, 0, 65535, 65529, 0, 65534, 65529, 0, 65533, 65529, 0, 65532, 65529, 0, 65531, 65529, 0, 5, 4, 0, 5, 3, 0, 5, 2, 0, 5, 1, 0, 5, 0, 0, 5, 65535, 0, 5, 65534, 0, 5, 65533, 0, 5, 65532, 0, 5, 65531, 0, 5, 65530, 0, 5, 65529, 0, 6, 4, 0, 6, 3, 0, 6, 2, 0, 6, 1, 0, 6, 0, 0, 6, 65535, 0, 6, 65534, 0, 6, 65533, 0, 6, 65532, 0, 6, 65531, 0, 6, 65530, 0, 6, 65529, 1, 65531, 5, 0, 65532, 5, 0, 65533, 5, 0, 65534, 5, 0, 65535, 5, 0, 0, 5, 0, 1, 5, 0, 2, 5, 0, 3, 5, 0, 6, 5, 0, 5, 5, 0, 4, 5, 0, 65530, 65529, 0, 65530, 65530, 0, 65530, 65531, 0, 65529, 65531, 0, 65529, 65532, 0, 65529, 65533, 0, 65529, 65534, 0, 65529, 0, 0, 65529, 1, 0, 65529, 2, 0, 65529, 3, 4, 65529, 4, 0, 65530, 4, 0, 65530, 3, 0, 65530, 2, 0, 65530, 1, 0, 65530, 0, 0, 65530, 65535, 0, 65529, 65529, 0, 65529, 65530, 0, 65530, 65532, 0, 65530, 65533, 0, 65530, 65534, 0, 65529, 65535, 0, 65529, 5, 0, 65530, 5, 0, 65529, 6, 0, 65530, 6, 0, 65531, 6, 0, 65532, 6, 0, 65533, 6, 0, 65534, 6, 0, 65535, 6, 0, 0, 6, 0, 4, 6, 0, 5, 6, 0, 6, 6, 0, 3, 6, 0, 2, 6, 0, 1, 6, 0, 131065, 6, 1, 131066, 6, 1, 131067, 6, 1, 131068, 6, 1, 131069, 6, 1, 131070, 6, 1, 131071, 6, 1, 65536, 6, 1, 65537, 6, 1, 65538, 6, 1, 65539, 6, 1, 65542, 65529, 1, 65541, 65529, 1, 65540, 65529, 1, 65539, 65529, 1, 65538, 65529, 1, 65537, 65529, 1, 65536, 65529, 1, 131071, 65529, 1, 131070, 65529, 1, 131069, 65529, 1, 131066, 65529, 1, 131065, 65529, 1, 131067, 65529, 1, 131068, 65529, 1, 131065, 65530, 1, 131065, 65531, 1, 131065, 65532, 1, 131065, 65533, 1, 131065, 2, 1, 131065, 3, 1, 131065, 4, 1, 131065, 5, 1, 131078, 6, 1, 131078, 65529, 1, 131077, 65529, 1, 131076, 65529, 1, 131075, 65529, 1, 131074, 65529, 1, 131073, 65529, 1, 131072, 65529, 1, 196607, 65529, 1, 196606, 65529, 1, 196605, 65529, 1, 196604, 65529, 1, 196603, 65529, 1, 196602, 65529, 1, 196601, 65529, 1, 196601, 65530, 1, 196601, 65531, 1, 196601, 65532, 1, 196601, 65533, 1, 196601, 2, 1, 196601, 3, 1, 196601, 4, 1, 196601, 5, 1, 196601, 6, 1, 196602, 6, 1, 196603, 6, 1, 196604, 6, 1, 196605, 6, 1, 196606, 6, 1, 196607, 6, 1, 131072, 6, 1, 131073, 6, 1, 131074, 6, 1, 131075, 6, 1, 131076, 6, 1, 65541, 6, 1, 65542, 6, 1, 131077, 6, 1, 65540, 6, 1, 7, 6, 1, 7, 5, 2, 7, 4, 2, 7, 3, 2, 7, 2, 2, 7, 1, 2, 7, 0, 2, 7, 65535, 2, 7, 65534, 2, 7, 65533, 2, 7, 65532, 2, 7, 65531, 2, 7, 65530, 2, 7, 65529, 1, 65543, 6, 1, 65543, 65529, 1, 131079, 6, 1, 131079, 65529, 1, 8, 6, 1, 8, 5, 3, 8, 4, 3, 8, 3, 3, 8, 2, 3, 8, 1, 3, 8, 0, 3, 8, 65535, 3, 8, 65534, 3, 8, 65533, 3, 8, 65532, 3, 8, 65531, 3, 8, 65530, 3, 8, 65529, 1, 9, 65529, 1, 9, 65530, 3, 9, 65531, 3, 9, 65532, 3, 9, 65533, 3, 9, 65534, 3, 9, 65535, 3, 9, 0, 3, 9, 1, 3, 9, 2, 3, 9, 3, 3, 9, 4, 3, 9, 5, 3, 9, 6, 1, 10, 6, 1, 10, 5, 3, 10, 4, 3, 10, 3, 3, 10, 2, 3, 10, 1, 3, 11, 1, 3, 11, 0, 3, 11, 65535, 3, 10, 65535, 3, 10, 65534, 3, 10, 65533, 3, 10, 65532, 3, 10, 65531, 3, 10, 65530, 3, 10, 65529, 1, 10, 0, 3, 11, 6, 1, 11, 5, 3, 11, 4, 3, 11, 3, 3, 11, 2, 3, 11, 65534, 3, 11, 65533, 3, 11, 65532, 3, 11, 65531, 3, 11, 65530, 3, 11, 65529, 1, 12, 6, 1, 13, 6, 1, 14, 6, 1, 15, 6, 1, 15, 5, 3, 15, 4, 3, 15, 3, 3, 15, 2, 3, 15, 1, 3, 15, 0, 3, 15, 65535, 3, 15, 65534, 3, 15, 65533, 3, 15, 65532, 3, 15, 65531, 3, 15, 65530, 3, 14, 65530, 3, 14, 65529, 1, 13, 65529, 1, 12, 65529, 1, 15, 65529, 1, 16, 65530, 1, 12, 65530, 3, 12, 65531, 3, 12, 65532, 3, 12, 65533, 3, 12, 65534, 3, 12, 65535, 3, 12, 0, 3, 12, 1, 3, 12, 2, 3, 12, 3, 3, 12, 4, 3, 12, 5, 3, 13, 5, 3, 14, 5, 3, 14, 4, 3, 13, 4, 3, 13, 3, 3, 13, 2, 3, 13, 1, 3, 13, 0, 3, 13, 65535, 3, 13, 65530, 3, 13, 65531, 3, 13, 65532, 3, 13, 65533, 3, 13, 65534, 3, 14, 0, 3, 14, 1, 3, 14, 2, 3, 14, 3, 3, 14, 65535, 3, 14, 65534, 3, 14, 65533, 3, 14, 65532, 3, 14, 65531, 3, 16, 6, 1, 16, 5, 1, 16, 4, 1, 16, 3, 1, 16, 2, 1, 16, 1, 1, 16, 0, 1, 16, 65535, 1, 16, 65534, 1, 16, 65533, 1, 16, 65532, 1, 16, 65531, 1, 16, 65529, 1, 65544, 6, 1, 65545, 6, 1, 65546, 6, 1, 65547, 6, 1, 65548, 6, 1, 65549, 6, 1, 65550, 6, 1, 65551, 6, 1, 65552, 6, 1, 65544, 65529, 1, 65545, 65529, 1, 65546, 65529, 1, 65547, 65529, 1, 65548, 65529, 1, 65549, 65529, 1, 65550, 65529, 1, 65552, 65529, 1, 65551, 65529, 1, 65552, 5, 1, 65552, 4, 1, 65552, 3, 1, 65552, 2, 1, 65552, 1, 1, 65552, 0, 1, 65552, 65535, 1, 65552, 65534, 1, 65552, 65533, 1, 65552, 65532, 1, 65552, 65531, 1, 65552, 65530, 1, 262137, 65529, 1, 262137, 65530, 1, 262137, 65531, 1, 262137, 65532, 1, 262137, 65533, 1, 262137, 65534, 1, 262137, 65535, 1, 262137, 0, 1, 262137, 1, 1, 262137, 2, 1, 262137, 3, 1, 262137, 4, 1, 262137, 5, 1, 262137, 6, 1, 262138, 6, 1, 262139, 6, 1, 262140, 6, 1, 262141, 6, 1, 262138, 65529, 1, 262139, 65529, 1, 262140, 65529, 1, 262141, 65529, 1, 65528, 6, 4, 65528, 5, 4, 65528, 4, 4, 65528, 3, 4, 65528, 2, 4, 65528, 1, 4, 65528, 0, 4, 65528, 65535, 4, 65528, 65534, 4, 65528, 65533, 4, 65528, 65532, 4, 65528, 65531, 4, 65528, 65530, 4, 65527, 65530, 4, 65527, 65531, 4, 65527, 65532, 4, 65527, 65533, 4, 65527, 65534, 4, 65527, 65535, 4, 65527, 0, 4, 65527, 1, 4, 65527, 2, 4, 65527, 3, 4, 65527, 4, 4, 65527, 5, 4, 65527, 6, 4, 65526, 6, 4, 65525, 6, 4, 65524, 6, 4, 65523, 6, 4, 65522, 6, 4, 65521, 6, 4, 65520, 6, 4, 65519, 6, 4, 65518, 6, 4, 65517, 6, 4, 65516, 6, 4, 65516, 5, 4, 65516, 4, 4, 65516, 3, 4, 65516, 2, 4, 65516, 1, 4, 65516, 0, 4, 65516, 65535, 4, 65516, 65534, 4, 65516, 65533, 4, 65516, 65532, 4, 65516, 65531, 4, 65516, 65530, 4, 65517, 65530, 4, 65518, 65530, 4, 65519, 65530, 4, 65520, 65530, 4, 65521, 65530, 4, 65522, 65530, 4, 65523, 65530, 4, 65524, 65530, 4, 65525, 65530, 4, 65526, 65530, 4, 65517, 65531, 4, 65518, 65531, 4, 65519, 65532, 4, 65520, 65532, 4, 65521, 65532, 4, 65522, 65532, 4, 65523, 65531, 4, 65524, 65531, 4, 65525, 65531, 4, 65526, 65531, 4, 65522, 65531, 4, 65521, 65531, 4, 65520, 65531, 4, 65519, 65531, 4, 65518, 65532, 4, 65517, 65532, 4, 65517, 65533, 4, 65517, 65534, 4, 65517, 65535, 4, 65517, 0, 4, 65517, 1, 4, 65517, 2, 4, 65517, 3, 4, 65517, 4, 4, 65517, 5, 4, 65518, 5, 4, 65518, 4, 4, 65518, 3, 4, 65518, 2, 4, 65518, 1, 4, 65519, 1, 4, 65519, 0, 4, 65519, 65535, 4, 65519, 65534, 4, 65519, 65533, 4, 65518, 65533, 4, 65518, 65534, 4, 65518, 0, 4, 65518, 65535, 4, 65520, 65534, 4, 65520, 65533, 4, 65521, 65533, 4, 65522, 65533, 4, 65523, 65532, 4, 65524, 65532, 4, 65525, 65532, 4, 65526, 65532, 4, 65526, 65533, 4, 65526, 65534, 4, 65526, 65535, 4, 65526, 0, 4, 65526, 1, 4, 65526, 2, 4, 65526, 3, 4, 65526, 4, 4, 65526, 5, 4, 65525, 5, 4, 65524, 5, 4, 65523, 5, 4, 65522, 5, 4, 65521, 5, 4, 65520, 5, 4, 65519, 5, 4, 65519, 4, 4, 65519, 3, 4, 65519, 2, 4, 65523, 65533, 4, 65524, 65533, 4, 65525, 65533, 4, 65525, 65534, 4, 65525, 65535, 4, 65525, 0, 4, 65525, 1, 4, 65525, 3, 4, 65525, 4, 4, 65524, 4, 4, 65523, 4, 4, 65522, 4, 4, 65521, 4, 4, 65521, 3, 4, 65520, 3, 4, 65520, 2, 4, 65520, 1, 4, 65520, 0, 4, 65520, 65535, 4, 65520, 4, 4, 65522, 3, 4, 65522, 2, 4, 65522, 1, 4, 65523, 1, 4, 65523, 0, 4, 65522, 0, 4, 65522, 65535, 4, 65522, 65534, 4, 65521, 65534, 4, 65521, 65535, 4, 65521, 0, 4, 65521, 1, 4, 65521, 2, 4, 65523, 3, 4, 65523, 2, 4, 65523, 65535, 4, 65523, 65534, 4, 65524, 65534, 4, 65524, 65535, 4, 65524, 0, 4, 65524, 1, 4, 65524, 2, 4, 65524, 3, 4, 65525, 2, 4, 65515, 6, 4, 65514, 6, 4, 65513, 6, 4, 65512, 6, 4, 65511, 6, 4, 65510, 6, 4, 65509, 6, 4, 65509, 5, 4, 65510, 5, 4, 65511, 5, 4, 65512, 5, 4, 65513, 5, 4, 65514, 5, 4, 65515, 5, 4, 65515, 4, 4, 65514, 4, 4, 65513, 4, 4, 65512, 4, 4, 65511, 4, 4, 65510, 4, 4, 65509, 4, 4, 65509, 3, 4, 65509, 2, 4, 65510, 2, 4, 65510, 1, 4, 65510, 0, 4, 65510, 65535, 4, 65510, 65534, 4, 65510, 65533, 4, 65509, 65534, 4, 65509, 65535, 4, 65509, 0, 4, 65509, 1, 4, 65510, 3, 4, 65511, 3, 4, 65512, 3, 4, 65513, 3, 4, 65514, 3, 4, 65515, 3, 4, 65511, 2, 4, 65512, 2, 4, 65513, 2, 4, 65514, 2, 4, 65515, 2, 4, 65515, 65530, 4, 65514, 65530, 4, 65513, 65530, 4, 65512, 65530, 4, 65511, 65530, 4, 65510, 65530, 4, 65509, 65530, 4, 65509, 65531, 4, 65509, 65532, 4, 65510, 65532, 4, 65509, 65533, 4, 65510, 65531, 4, 65511, 65531, 4, 65512, 65531, 4, 65513, 65531, 4, 65514, 65531, 4, 65515, 65531, 4, 65515, 65532, 4, 65514, 65532, 4, 65513, 65532, 4, 65512, 65532, 4, 65511, 65533, 4, 65511, 65532, 4, 65512, 65533, 4, 65511, 65534, 4, 65511, 65535, 4, 65511, 0, 4, 65512, 0, 4, 65512, 1, 4, 65511, 1, 4, 65513, 65534, 4, 65513, 65535, 4, 65513, 0, 4, 65512, 65535, 4, 65512, 65534, 4, 65513, 1, 4, 65514, 65535, 4, 65514, 65534, 4, 65514, 65533, 4, 65514, 0, 4, 65514, 1, 4, 65513, 65533, 4, 65515, 65533, 4, 65515, 65534, 4, 65515, 65535, 4, 65515, 0, 4, 65515, 1, 4, 65509, 7, 4, 65510, 7, 4, 65511, 7, 4, 65512, 7, 4, 65513, 7, 4, 65514, 7, 4, 65515, 7, 4, 65516, 7, 4, 65517, 7, 4, 65518, 7, 4, 65519, 7, 4, 65520, 7, 4, 65521, 7, 4, 65522, 7, 4, 65523, 7, 4, 65524, 7, 4, 65525, 7, 4, 65526, 7, 4, 65527, 7, 4, 65528, 7, 4, 65528, 8, 4, 65527, 8, 4, 65526, 8, 4, 65525, 8, 4, 65524, 8, 4, 65523, 8, 4, 65509, 8, 4, 65510, 8, 4, 65511, 8, 4, 65512, 8, 4, 65513, 8, 4, 65514, 8, 4, 65515, 8, 4, 65516, 8, 4, 65517, 8, 4, 65518, 8, 4, 65519, 8, 4, 65520, 8, 4, 65521, 8, 4, 65522, 8, 4, 65509, 9, 4, 65510, 9, 4, 65511, 9, 4, 65512, 9, 4, 65513, 9, 4, 65514, 9, 4, 65515, 9, 4, 65516, 9, 4, 65517, 9, 4, 65518, 9, 4, 65519, 9, 4, 65520, 9, 4, 65521, 9, 4, 65522, 9, 4, 65523, 9, 4, 65524, 9, 4, 65525, 9, 4, 65526, 9, 4, 65527, 9, 4, 65528, 9, 4, 65509, 10, 4, 65510, 10, 4, 65511, 10, 4, 65512, 10, 4, 65513, 10, 4, 65514, 10, 4, 65515, 10, 4, 65516, 10, 4, 65517, 10, 4, 65518, 10, 4, 65519, 10, 4, 65520, 10, 4, 65521, 10, 4, 65522, 10, 4, 65523, 10, 4, 65524, 10, 4, 65525, 10, 4, 65526, 10, 4, 65527, 10, 4, 65528, 10, 4, 65509, 11, 4, 65510, 11, 4, 65511, 11, 4, 65512, 11, 4, 65513, 11, 4, 65514, 11, 4, 65515, 11, 4, 65516, 11, 4, 65517, 11, 4, 65518, 11, 4, 65519, 11, 4, 65520, 11, 4, 65521, 11, 4, 65522, 11, 4, 65523, 11, 4, 65524, 11, 4, 65525, 11, 4, 65526, 11, 4, 65527, 11, 4, 65528, 11, 4, 65509, 12, 4, 65510, 12, 4, 65511, 12, 4, 65512, 12, 4, 65513, 12, 4, 65514, 12, 4, 65515, 12, 4, 65516, 12, 4, 65517, 12, 4, 65518, 12, 4, 65519, 12, 4, 65520, 12, 4, 65521, 12, 4, 65522, 12, 4, 65523, 12, 4, 65524, 12, 4, 65525, 12, 4, 65526, 12, 4, 65527, 12, 4, 65528, 12, 4, 65509, 13, 4, 65510, 13, 4, 65511, 13, 4, 65512, 13, 4, 65513, 13, 4, 65514, 13, 4, 65515, 13, 4, 65516, 13, 4, 65517, 13, 4, 65518, 13, 4, 65519, 13, 4, 65520, 13, 4, 65521, 13, 4, 65522, 13, 4, 65523, 13, 4, 65524, 13, 4, 65525, 13, 4, 65526, 13, 4, 65527, 13, 4, 65528, 13, 4, 65509, 14, 4, 65510, 14, 4, 65511, 14, 4, 65512, 14, 4, 65513, 14, 4, 65514, 14, 4, 65515, 14, 4, 65516, 14, 4, 65517, 14, 4, 65518, 14, 4, 65519, 14, 4, 65520, 14, 4, 65521, 14, 4, 65522, 14, 4, 65523, 14, 4, 65524, 14, 4, 65525, 14, 4, 65526, 14, 4, 65527, 14, 4, 65528, 14, 4, 131064, 65530, 4, 131063, 65530, 4, 131062, 65530, 4, 131061, 65530, 4, 131060, 65530, 4, 131059, 65530, 4, 131058, 65530, 4, 131057, 65530, 4, 131056, 65530, 4, 131055, 65530, 4, 131054, 65530, 4, 131053, 65530, 4, 131052, 65530, 4, 131051, 65530, 4, 131050, 65530, 4, 131049, 65530, 4, 131048, 65530, 4, 131047, 65530, 4, 131046, 65530, 4, 131045, 65530, 4, 131045, 65531, 4, 131045, 65532, 4, 131045, 65533, 4, 131045, 65534, 4, 131045, 65535, 4, 131045, 0, 4, 131045, 1, 4, 131045, 2, 4, 131045, 3, 4, 131045, 4, 4, 131045, 5, 4, 131045, 6, 4, 131045, 7, 4, 131045, 8, 4, 131045, 9, 4, 131045, 10, 4, 131045, 11, 4, 131045, 12, 4, 131045, 13, 4, 131045, 14, 4, 65529, 7, 4, 65529, 8, 4, 65529, 9, 4, 65529, 10, 4, 65529, 11, 4, 65529, 12, 4, 65529, 13, 4, 65529, 14, 4, 131065, 7, 4, 131065, 8, 4, 131065, 9, 4, 131065, 10, 4, 131065, 11, 4, 131065, 12, 4, 131065, 13, 4, 131065, 14, 4, 131046, 14, 4, 131047, 14, 4, 131048, 14, 4, 131049, 14, 4, 131064, 14, 4, 131063, 14, 4, 131062, 14, 4, 131061, 14, 4, 131050, 14, 4, 131060, 14, 4, 65515, 15, 4, 65516, 15, 4, 65517, 15, 4, 65518, 15, 4, 65519, 15, 4, 65520, 15, 4, 65523, 15, 4, 65522, 15, 4, 65521, 15, 4, 65515, 16, 4, 65516, 16, 4, 65517, 16, 4, 65518, 16, 4, 65519, 16, 4, 65520, 16, 4, 65521, 16, 4, 65522, 16, 4, 65523, 16, 4, 65523, 17, 4, 65522, 17, 4, 65521, 17, 4, 65520, 17, 4, 65519, 17, 4, 65518, 17, 4, 65517, 17, 4, 65516, 17, 4, 65515, 17, 4, 65516, 18, 4, 65515, 18, 4, 65517, 18, 4, 65518, 18, 4, 65519, 18, 4, 65520, 18, 4, 65521, 18, 4, 65523, 18, 4, 65522, 18, 4, 65521, 19, 4, 65520, 19, 4, 65519, 19, 4, 65518, 19, 4, 65517, 19, 4, 65516, 19, 4, 65515, 19, 4, 65522, 19, 4, 65523, 19, 4, 65523, 20, 4, 65522, 20, 4, 65521, 20, 4, 65520, 20, 4, 65519, 20, 4, 65518, 20, 4, 65517, 20, 4, 65516, 20, 4, 65515, 20, 4, 65515, 21, 4, 65516, 21, 4, 65517, 21, 4, 65518, 21, 4, 65519, 21, 4, 65520, 21, 4, 65521, 21, 4, 65522, 21, 4, 65523, 21, 4, 65523, 22, 4, 65523, 23, 4, 65522, 23, 4, 65521, 23, 4, 65520, 23, 4, 65519, 23, 4, 65518, 23, 4, 65518, 22, 4, 65517, 22, 4, 65516, 22, 4, 65515, 22, 4, 65515, 23, 4, 65516, 23, 4, 65517, 23, 4, 65519, 22, 4, 65520, 22, 4, 65521, 22, 4, 65522, 22, 4, 65515, 24, 4, 65516, 24, 4, 65517, 24, 4, 65518, 24, 4, 65519, 24, 4, 65520, 24, 4, 65521, 24, 4, 65522, 24, 4, 65523, 24, 4, 65523, 25, 4, 65523, 26, 4, 65522, 26, 4, 65521, 26, 4, 65520, 26, 4, 65519, 26, 4, 65518, 26, 4, 65517, 26, 4, 65516, 26, 4, 65515, 26, 4, 65515, 25, 4, 65516, 25, 4, 65520, 25, 4, 65521, 25, 4, 65522, 25, 4, 65519, 25, 4, 65518, 25, 4, 65517, 25, 4, 65515, 27, 4, 65516, 27, 4, 65517, 27, 4, 65518, 27, 4, 65519, 27, 4, 65520, 27, 4, 65521, 27, 4, 65522, 27, 4, 65523, 27, 4, 65516, 28, 4, 65515, 28, 4, 65517, 28, 4, 65518, 28, 4, 65519, 28, 4, 65520, 28, 4, 65521, 28, 4, 65522, 28, 4, 65523, 28, 4, 65523, 29, 4, 65522, 29, 4, 65521, 29, 4, 65520, 29, 4, 65519, 29, 4, 65518, 29, 4, 65517, 29, 4, 65516, 29, 4, 65515, 29, 4, 65515, 30, 4, 65516, 30, 4, 65517, 30, 4, 65518, 30, 4, 65518, 31, 4, 65519, 31, 4, 65520, 31, 4, 65521, 31, 4, 65522, 31, 4, 65523, 30, 4, 65522, 30, 4, 65521, 30, 4, 65520, 30, 4, 65519, 30, 4, 65516, 31, 4, 65515, 31, 4, 65517, 31, 4, 65523, 31, 4, 65516, 32, 4, 65515, 32, 4, 65517, 32, 4, 65518, 32, 4, 65519, 32, 4, 65520, 32, 4, 65521, 32, 4, 65522, 32, 4, 65523, 32, 4, 65523, 33, 4, 65522, 33, 4, 65521, 33, 4, 65520, 33, 4, 65519, 33, 4, 65518, 33, 4, 65517, 33, 4, 65516, 33, 4, 65515, 33, 4, 65515, 34, 4, 65516, 34, 4, 65517, 34, 4, 65518, 34, 4, 65519, 34, 4, 65520, 34, 4, 65521, 34, 4, 65522, 34, 4, 65523, 34, 4, 65523, 35, 4, 65522, 35, 4, 65521, 35, 4, 65520, 35, 4, 65519, 35, 4, 65518, 35, 4, 65517, 35, 4, 65516, 35, 4, 65515, 35, 4, 65515, 36, 4, 65516, 36, 4, 65517, 36, 4, 65518, 36, 4, 65519, 36, 4, 65520, 36, 4, 65521, 36, 4, 65522, 36, 4, 65523, 36, 4, 65523, 37, 4, 65522, 37, 4, 65521, 37, 4, 65520, 37, 4, 65519, 37, 4, 65518, 37, 4, 65517, 37, 4, 65516, 37, 4, 65515, 37, 4, 65515, 38, 4, 65516, 38, 4, 65517, 38, 4, 65518, 38, 4, 65519, 38, 4, 65520, 38, 4, 65521, 38, 4, 65522, 38, 4, 65523, 38, 4, 65523, 39, 4, 65522, 39, 4, 65521, 39, 4, 65520, 39, 4, 65519, 39, 4, 65518, 39, 4, 65517, 39, 4, 65516, 39, 4, 65515, 39, 4, 65515, 40, 4, 65516, 40, 4, 65517, 40, 4, 65518, 40, 4, 65519, 40, 4, 65520, 40, 4, 65521, 40, 4, 65522, 40, 4, 65523, 40, 4, 65523, 41, 4, 65523, 42, 4, 65522, 41, 4, 65521, 41, 4, 65520, 41, 4, 65519, 41, 4, 65518, 41, 4, 65518, 42, 4, 65517, 42, 4, 65516, 42, 4, 65515, 42, 4, 65515, 41, 4, 65516, 41, 4, 65517, 41, 4, 65522, 42, 4, 65521, 42, 4, 65520, 42, 4, 65519, 42, 4, 131051, 14, 4, 131051, 15, 4, 131051, 16, 4, 131051, 17, 4, 131051, 18, 4, 131051, 19, 4, 131051, 20, 4, 131051, 21, 4, 131051, 22, 4, 131051, 23, 4, 131051, 24, 4, 131051, 25, 4, 131051, 26, 4, 131051, 27, 4, 131051, 28, 4, 131051, 29, 4, 131059, 14, 4, 131059, 15, 4, 131059, 16, 4, 131059, 17, 4, 131059, 18, 4, 131059, 19, 4, 131059, 20, 4, 131059, 21, 4, 131059, 22, 4, 131059, 23, 4, 131059, 24, 4, 131059, 25, 4, 131059, 26, 4, 131059, 27, 4, 131059, 28, 4, 131059, 29, 4, 131059, 30, 4, 131059, 31, 4, 131059, 32, 4, 131059, 33, 4, 131059, 34, 4, 131059, 35, 4, 131059, 36, 4, 131059, 37, 4, 131059, 38, 4, 131051, 30, 4, 131051, 31, 4, 131051, 32, 4, 131051, 33, 4, 131051, 34, 4, 131051, 35, 4, 131051, 36, 4, 131051, 37, 4, 131051, 38, 4, 131051, 39, 4, 131051, 40, 4, 131051, 41, 4, 131051, 42, 4, 131059, 39, 4, 131059, 40, 4, 131059, 41, 4, 131059, 42, 4, 196600, 65530, 4, 196599, 65530, 4, 196598, 65530, 4, 196597, 65530, 4, 196596, 65530, 4, 196595, 65530, 4, 196594, 65530, 4, 196593, 65530, 4, 196592, 65530, 4, 196591, 65530, 4, 196590, 65530, 4, 196589, 65530, 4, 196588, 65530, 4, 196587, 65530, 4, 196586, 65530, 4, 196585, 65530, 4, 196584, 65530, 4, 196583, 65530, 4, 196582, 65530, 4, 196581, 65530, 4, 196581, 65531, 4, 196581, 65532, 4, 196581, 65533, 4, 196581, 65534, 4, 196581, 65535, 4, 196581, 0, 4, 196581, 1, 4, 196581, 2, 4, 196581, 3, 4, 196581, 4, 4, 196581, 5, 4, 196581, 6, 4, 196581, 7, 4, 196581, 8, 4, 196581, 9, 4, 196581, 10, 4, 196581, 11, 4, 196581, 12, 4, 196581, 13, 4, 196581, 14, 4, 196582, 14, 4, 196583, 14, 4, 196584, 14, 4, 196585, 14, 4, 196586, 14, 4, 196587, 14, 4, 196601, 7, 4, 196601, 8, 4, 196601, 9, 4, 196601, 10, 4, 196601, 11, 4, 196601, 12, 4, 196601, 13, 4, 196601, 14, 4, 196600, 14, 4, 196599, 14, 4, 196598, 14, 4, 196597, 14, 4, 196596, 14, 4, 196595, 14, 4, 196595, 15, 4, 196595, 16, 4, 196595, 17, 4, 196595, 18, 4, 196595, 19, 4, 196595, 20, 4, 196595, 21, 4, 196595, 22, 4, 196595, 23, 4, 196595, 24, 4, 196595, 25, 4, 196595, 26, 4, 196595, 27, 4, 196595, 28, 4, 196595, 29, 4, 196595, 30, 4, 196595, 31, 4, 196595, 32, 4, 196595, 33, 4, 196595, 34, 4, 196595, 35, 4, 196595, 36, 4, 196595, 37, 4, 196595, 38, 4, 196595, 39, 4, 196595, 40, 4, 196595, 41, 4, 196595, 42, 4, 196587, 15, 4, 196587, 16, 4, 196587, 17, 4, 196587, 18, 4, 196587, 19, 4, 196587, 20, 4, 196587, 21, 4, 196587, 22, 4, 196587, 23, 4, 196587, 24, 4, 196587, 25, 4, 196587, 26, 4, 196587, 27, 4, 196587, 28, 4, 196587, 29, 4, 196587, 30, 4, 196587, 31, 4, 196587, 32, 4, 196587, 33, 4, 196587, 34, 4, 196587, 35, 4, 196587, 36, 4, 196587, 37, 4, 196587, 38, 4, 196587, 39, 4, 196587, 40, 4, 196587, 41, 4, 196587, 42, 4, 131052, 15, 4, 131053, 15, 4, 131054, 15, 4, 131055, 15, 4, 131056, 15, 4, 131057, 15, 4, 131058, 15, 4, 131052, 19, 4, 131053, 19, 4, 131054, 19, 4, 131055, 19, 4, 131056, 19, 4, 131057, 19, 4, 131058, 19, 4, 131052, 22, 4, 131053, 22, 4, 131054, 22, 4, 131055, 22, 4, 131056, 22, 4, 131057, 22, 4, 131058, 22, 4, 131052, 24, 4, 131053, 24, 4, 131054, 24, 4, 131055, 24, 4, 131056, 24, 4, 131057, 24, 4, 131058, 24, 4, 131052, 26, 4, 131053, 26, 4, 131054, 26, 4, 131055, 26, 4, 131056, 26, 4, 131057, 26, 4, 131058, 26, 4, 131052, 29, 4, 131053, 29, 4, 131054, 29, 4, 131055, 29, 4, 131056, 29, 4, 131057, 29, 4, 131058, 29, 4, 131052, 33, 4, 131053, 33, 4, 131054, 33, 4, 131055, 33, 4, 131056, 33, 4, 131057, 33, 4, 131058, 33, 4, 131052, 38, 4, 131053, 38, 4, 131054, 38, 4, 131055, 38, 4, 131056, 38, 4, 131057, 38, 4, 131058, 38, 4, 131052, 42, 4, 131053, 42, 4, 131054, 42, 4, 131055, 42, 4, 131056, 42, 4, 131057, 42, 4, 131058, 42, 4, 196588, 42, 4, 196589, 42, 4, 196590, 42, 4, 196591, 42, 4, 196592, 42, 4, 196593, 42, 4, 196594, 42, 4, 131080, 65529, 1, 131081, 65529, 1, 131080, 6, 1, 131081, 6, 1, 131082, 6, 1, 131083, 6, 1, 131084, 6, 1, 131085, 6, 1, 131086, 6, 1, 131087, 6, 1, 131088, 6, 1, 131088, 5, 1, 131088, 4, 1, 131088, 3, 1, 131088, 2, 1, 131088, 1, 1, 131088, 0, 1, 131088, 65535, 1, 131088, 65534, 1, 131088, 65533, 1, 131088, 65532, 1, 131088, 65531, 1, 131088, 65530, 1, 131082, 65529, 1, 131083, 65529, 1, 131084, 65529, 1, 131085, 65529, 1, 131086, 65529, 1, 131087, 65529, 1, 131088, 65529, 1, 262137, 7, 4, 262137, 8, 4, 262137, 9, 4, 262137, 10, 4, 262137, 11, 4, 262137, 12, 4, 262137, 13, 4, 262137, 14, 4, 262131, 14, 4, 262132, 14, 4, 262133, 14, 4, 262134, 14, 4, 262135, 14, 4, 262136, 14, 4, 262131, 15, 4, 262131, 16, 4, 262131, 17, 4, 262131, 18, 4, 262131, 19, 4, 262131, 20, 4, 262131, 21, 4, 262131, 22, 4, 262131, 23, 4, 262131, 24, 4, 262131, 25, 4, 262131, 26, 4, 262131, 27, 4, 262131, 28, 4, 262131, 29, 4, 262131, 30, 4, 262131, 31, 4, 262131, 32, 4, 262131, 33, 4, 262131, 34, 4, 262131, 35, 4, 262131, 36, 4, 262131, 37, 4, 262131, 38, 4, 262131, 39, 4, 262131, 40, 4, 262131, 41, 4, 262131, 42, 4, 262130, 42, 4, 262129, 42, 4, 262128, 42, 4, 262127, 42, 4, 262126, 42, 4, 262125, 42, 4, 262124, 42, 4, 262123, 42, 4, 262123, 33, 4, 262123, 34, 4, 262123, 35, 4, 262123, 36, 4, 262123, 37, 4, 262123, 38, 4, 262123, 39, 4, 262123, 40, 4, 262123, 41, 4, 262123, 27, 4, 262123, 28, 4, 262123, 29, 4, 262123, 30, 4, 262123, 31, 4, 262123, 32, 4, 262123, 20, 4, 262123, 21, 4, 262123, 22, 4, 262123, 23, 4, 262123, 24, 4, 262123, 25, 4, 262123, 26, 4, 262123, 14, 4, 262123, 15, 4, 262123, 16, 4, 262123, 17, 4, 262123, 18, 4, 262123, 19, 4, 262117, 14, 4, 262118, 14, 4, 262119, 14, 4, 262120, 14, 4, 262121, 14, 4, 262122, 14, 4, 262117, 4, 4, 262117, 5, 4, 262117, 6, 4, 262117, 7, 4, 262117, 8, 4, 262117, 9, 4, 262117, 10, 4, 262117, 11, 4, 262117, 12, 4, 262117, 13, 4, 262117, 65530, 4, 262117, 65531, 4, 262117, 65532, 4, 262117, 65533, 4, 262117, 65534, 4, 262117, 65535, 4, 262117, 0, 4, 262117, 1, 4, 262117, 2, 4, 262117, 3, 4, 262118, 65530, 4, 262119, 65530, 4, 262120, 65530, 4, 262121, 65530, 4, 262122, 65530, 4, 262123, 65530, 4, 262124, 65530, 4, 262125, 65530, 4, 262126, 65530, 4, 262127, 65530, 4, 262128, 65530, 4, 262129, 65530, 4, 262130, 65530, 4, 262131, 65530, 4, 262135, 65530, 4, 262132, 65530, 4, 262133, 65530, 4, 262134, 65530, 4, 262136, 65530, 4, 65539, 65534, 5, 65537, 2, 5, 131069, 2, 5, 131069, 0, 5, 131067, 65535, 5, 131069, 65534, 5, 131070, 65533, 5, 131068, 65532, 5, 131067, 3, 5, 131068, 5, 5, 65538, 4, 5, 65537, 5, 5, 65541, 4, 5, 65540, 2, 5, 65540, 0, 5, 65537, 65532, 5, 65536, 65534, 5, 131071, 65531, 5, 65541, 65531, 5, 65539, 65532, 5, 65542, 65535, 5, 65543, 3, 6, 65543, 0, 6, 65543, 65532, 6, 65543, 65530, 6, 131066, 65530, 5)
+}
+metadata/_editor_floor_ = Vector3(0, 1, 0)
+
+[node name="Test" type="VisibleOnScreenEnabler3D" parent="MapObjects"]
+enable_node_path = NodePath("")
+
+[node name="Board" parent="MapObjects/Test" instance=ExtResource("5_pp7ee")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -5, 1.5, -3)
+LabelText = "阿巴阿巴!!"
+
+[node name="GameObjects" type="Node3D" parent="."]
+unique_name_in_owner = true
+
+[node name="Enemy1" parent="GameObjects" instance=ExtResource("4_v2fvr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.526, 2, -2.052)
+axis_lock_angular_x = false
+axis_lock_angular_z = false
+
+[node name="Enemy2" parent="GameObjects" instance=ExtResource("4_v2fvr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.332, 2, 4.532)
+axis_lock_angular_x = false
+axis_lock_angular_z = false
+
+[node name="Enemy3" parent="GameObjects" instance=ExtResource("4_v2fvr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.365, 2, -1.984)
+axis_lock_angular_x = false
+axis_lock_angular_z = false
+
+[node name="Enemy4" parent="GameObjects" instance=ExtResource("4_v2fvr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.844, 2, 4.48)
+axis_lock_angular_x = false
+axis_lock_angular_z = false
+
+[node name="Enemy5" parent="GameObjects" instance=ExtResource("4_v2fvr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4203, 2, 0.664042)
+axis_lock_angular_x = false
+axis_lock_angular_z = false
+
+[node name="Player" parent="." instance=ExtResource("3_jfay1")]
+unique_name_in_owner = true
+Weapon = SubResource("Resource_4h3dx")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Info1" type="HSplitContainer" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_bottom = -60.0
+grow_vertical = 0
+scale = Vector2(2, 2)
+dragger_visibility = 1
+
+[node name="TextureRect" type="TextureRect" parent="UI/Info1"]
+layout_mode = 2
+texture = ExtResource("6_1au52")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UI/Info1"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 30
+text = "移动"
+
+[node name="Info2" type="HSplitContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -150.0
+offset_bottom = -60.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(2, 2)
+dragger_visibility = 1
+
+[node name="Label" type="Label" parent="UI/Info2"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 30
+text = "攻击"
+
+[node name="TextureRect" type="TextureRect" parent="UI/Info2"]
+layout_mode = 2
+texture = ExtResource("7_wjpmk")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Info3" type="HSplitContainer" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_bottom = -120.0
+grow_vertical = 0
+dragger_visibility = 1
+
+[node name="TextureRect" type="TextureRect" parent="UI/Info3"]
+layout_mode = 2
+texture = ExtResource("8_s37f0")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UI/Info3"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 30
+text = "加速"
+
+[node name="HpBar" type="ProgressBar" parent="UI"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 500.0
+offset_bottom = 50.0
+theme_override_styles/background = SubResource("StyleBoxFlat_6hno6")
+theme_override_styles/fill = SubResource("StyleBoxFlat_e6xmv")
+value = 50.0

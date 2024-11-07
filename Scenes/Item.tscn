@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://dqw2ygpfya2dw"]
+
+[ext_resource type="Script" path="res://Scripts/Item.cs" id="1_mdeid"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2yakm"]
+
+[node name="Item" type="CharacterBody3D"]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("1_mdeid")
+
+[node name="Shape" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_2yakm")
