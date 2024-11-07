@@ -7,11 +7,11 @@
 [ext_resource type="PackedScene" uid="uid://d2cd4cnoxpxhl" path="res://Scenes/Player.tscn" id="3_jfay1"]
 [ext_resource type="PackedScene" uid="uid://mf8xm258dscn" path="res://Scenes/Enemies/SlimeZero.tscn" id="4_v2fvr"]
 [ext_resource type="PackedScene" uid="uid://crmktmb86dm06" path="res://Scenes/Items/board.tscn" id="5_pp7ee"]
-[ext_resource type="Texture2D" uid="uid://ry4w41jqj4iv" path="res://Assets/Textures/Ui/UiButtonLs.png" id="6_1au52"]
-[ext_resource type="Texture2D" uid="uid://baahbg6inu8lc" path="res://Assets/Textures/Ui/UiButtonRt.png" id="7_wjpmk"]
-[ext_resource type="Texture2D" uid="uid://cre2865eob5g1" path="res://Assets/Textures/Ui/UiButtonLt.png" id="8_s37f0"]
 [ext_resource type="PackedScene" uid="uid://b20so5ttcpexc" path="res://Scenes/Bullets/SmallFireball.tscn" id="8_w10ov"]
 [ext_resource type="Script" path="res://Scripts/Weapon.cs" id="9_2ocny"]
+[ext_resource type="Texture2D" uid="uid://bphl1g4snbg5l" path="res://Assets/Textures/Ui/leftstick_light.png" id="10_37jko"]
+[ext_resource type="Texture2D" uid="uid://dnk1dl01y3hi2" path="res://Assets/Textures/Ui/xbox_rt_light.png" id="11_5se4d"]
+[ext_resource type="Texture2D" uid="uid://cpjq50wl556i1" path="res://Assets/Textures/Ui/xbox_lt_light.png" id="12_uo2si"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wu6kb"]
 sky_horizon_color = Color(0.619, 0.665825, 0.7025, 1)
@@ -268,7 +268,7 @@ dragger_visibility = 1
 
 [node name="TextureRect" type="TextureRect" parent="UI/Info1"]
 layout_mode = 2
-texture = ExtResource("6_1au52")
+texture = ExtResource("10_37jko")
 expand_mode = 2
 stretch_mode = 5
 
@@ -301,7 +301,7 @@ text = "攻击"
 
 [node name="TextureRect" type="TextureRect" parent="UI/Info2"]
 layout_mode = 2
-texture = ExtResource("7_wjpmk")
+texture = ExtResource("11_5se4d")
 expand_mode = 2
 stretch_mode = 5
 
@@ -316,7 +316,7 @@ dragger_visibility = 1
 
 [node name="TextureRect" type="TextureRect" parent="UI/Info3"]
 layout_mode = 2
-texture = ExtResource("8_s37f0")
+texture = ExtResource("12_uo2si")
 expand_mode = 2
 stretch_mode = 5
 

@@ -70,7 +70,7 @@ public partial class Player : CharacterBody3D, IPlayer, ITargetable, IAttackable
 			velocity.Y = JumpVelocity;
 		}
 		var newRotation = Input.GetAxis("CameraLeft", "CameraRight");
-		GlobalRotation += Vector3.Up * newRotation * (float)delta;
+		GlobalRotation += Vector3.Down * newRotation * (float)delta;
 		var zoom = Input.GetAxis("CameraZoomDown", "CameraZoomUp");
 		_camera.Fov = zoom switch
 		{
@@ -172,5 +172,29 @@ public partial class Player : CharacterBody3D, IPlayer, ITargetable, IAttackable
 		if(body is not Item item) return;
 		item.OnFarFromPlayer();
 		if(_currentItem == item) _currentItem = null;
+	}
+	
+	public override async void _UnhandledInput(InputEvent @event)
+	{
+		switch (@event)
+		{
+			case InputEventMouseMotion motion:
+				GlobalRotation += Vector3.Down * motion.Relative.X / (Engine.GetPhysicsTicksPerSecond() * 8f);
+				break;
+			case InputEventMouseButton mouseButton:
+				var zoom = mouseButton.ButtonIndex switch
+				{
+					MouseButton.WheelDown => -1,
+					MouseButton.WheelUp => 1,
+					_ => 0
+				};
+				_camera.Fov = zoom switch
+				{
+					< 0 => MathF.Min(_camera.Fov + 1.5f, 120),
+					> 0 => MathF.Max(_camera.Fov - 1.5f, 75),
+					_ => _camera.Fov
+				};
+				break;
+		}
 	}
 }
