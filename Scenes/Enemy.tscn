@@ -120,11 +120,13 @@ script = ExtResource("1_epukt")
 shape = SubResource("CylinderShape3D_0ayak")
 
 [node name="Image" type="Sprite3D" parent="."]
+cast_shadow = 0
 gi_mode = 0
 offset = Vector2(0, 5)
 pixel_size = 0.0313
 billboard = 1
 double_sided = false
+alpha_cut = 3
 texture_filter = 0
 
 [node name="Animation" type="AnimationPlayer" parent="."]
@@ -134,7 +136,7 @@ libraries = {
 
 [node name="Shadow" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-transparency = 1.0
+cast_shadow = 3
 mesh = SubResource("CylinderMesh_dcig3")
 
 [node name="Circle" type="MeshInstance3D" parent="."]

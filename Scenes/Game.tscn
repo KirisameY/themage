@@ -262,7 +262,7 @@ environment = SubResource("Environment_ymbfg")
 camera_attributes = SubResource("CameraAttributesPractical_j3b7v")
 
 [node name="KiriWater" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0282822, 0.793682, 0.158004)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0282822, 0.731678, 0.158004)
 mesh = SubResource("PlaneMesh_qor6q")
 
 [node name="Water" type="MeshInstance3D" parent="."]
