@@ -58,9 +58,6 @@ script = ExtResource("2_4o0ve")
 [node name="Spawner" type="MeshInstance3D" parent="." index="1"]
 mesh = SubResource("ArrayMesh_q5mbc")
 
-[node name="Text" parent="Info" index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.994003, 0)
-
 [node name="Obstracle" type="NavigationObstacle3D" parent="." index="3"]
 visible = false
 radius = 0.5

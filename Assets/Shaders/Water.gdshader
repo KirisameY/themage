@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode cull_back, depth_draw_always, shadows_disabled;
+render_mode shadows_disabled, cull_back, depth_draw_never;
 
 #include "Noise.gdshaderinc"
 #include "Blur.gdshaderinc"

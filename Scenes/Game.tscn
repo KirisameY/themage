@@ -1,10 +1,10 @@
-[gd_scene load_steps=42 format=3 uid="uid://bumttdvbt0da8"]
+[gd_scene load_steps=34 format=3 uid="uid://bumttdvbt0da8"]
 
 [ext_resource type="PackedScene" uid="uid://bb68gnxsxx8hy" path="res://Scenes/Map.tscn" id="1_gi0pr"]
 [ext_resource type="Script" path="res://Scripts/Game.cs" id="1_gs5qa"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Water.gdshader" id="2_e7kep"]
 [ext_resource type="MeshLibrary" uid="uid://jwuuuhrpfkcb" path="res://Assets/Blocks.tres" id="2_j05nu"]
-[ext_resource type="FastNoiseLite" uid="uid://buwnasnly01lv" path="res://Assets/Textures/Misc/Noise.res" id="3_btn51"]
+[ext_resource type="Script" path="res://Scripts/GDS/Water.gd" id="3_3mbvb"]
 [ext_resource type="PackedScene" uid="uid://d2cd4cnoxpxhl" path="res://Scenes/Player.tscn" id="3_jfay1"]
 [ext_resource type="PackedScene" uid="uid://mf8xm258dscn" path="res://Scenes/Enemies/SlimeZero.tscn" id="4_v2fvr"]
 [ext_resource type="PackedScene" uid="uid://crmktmb86dm06" path="res://Scenes/Items/board.tscn" id="5_pp7ee"]
@@ -58,91 +58,6 @@ shader_parameter/BlurStrength = 1.2
 [sub_resource type="PlaneMesh" id="PlaneMesh_qor6q"]
 material = SubResource("ShaderMaterial_giygt")
 size = Vector2(100, 100)
-subdivide_width = 1
-subdivide_depth = 1
-
-[sub_resource type="Shader" id="Shader_5yamw"]
-code = "shader_type spatial;
-render_mode specular_disabled;
-uniform sampler2D noiseTexture;
-uniform sampler2D noiseTexture2;
-uniform vec4 color:source_color;
-uniform sampler2D depth:hint_depth_texture;
-
-void vertex()
-{
-	vec3 vertex = VERTEX;
-	vec3 position = NODE_POSITION_WORLD;
-	UV = fract((position.xz + vertex.xz + vec2(TIME))/1000.);
-	vertex.y += (texture(noiseTexture,
-		fract((position.xz + vertex.xz + vec2(TIME))/1000.)).r);
-	VERTEX = vertex;
-}
-
-void fragment()
-{
-	// LinearSceneDepth:2
-		float log_depth = textureLod(depth, SCREEN_UV, 0.0).x;
-		vec4 depth_view = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, log_depth, 1.0);
-		depth_view.xyz /= depth_view.w;
-		float now_depth = -depth_view.z;
-
-	vec4 now_color = mix(vec4(vec3(pow((now_depth + VERTEX.z)/2.0,5.0)),color.a),color,0.2);
-	ALBEDO = (now_color.rgb)/2.0;
-	ALPHA = now_color.a;
-	NORMAL = vec3(1) - texture(noiseTexture2,UV).rgb;
-}
-
-void light()
-{
-	vec3 light = DIFFUSE_LIGHT;
-	light *= vec3(0.0,0.3,1.0);
-	DIFFUSE_LIGHT = light;
-}
-"
-
-[sub_resource type="Gradient" id="Gradient_xlk37"]
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_yuxnp"]
-width = 1000
-height = 1000
-seamless = true
-seamless_blend_skirt = 0.5
-color_ramp = SubResource("Gradient_xlk37")
-noise = ExtResource("3_btn51")
-
-[sub_resource type="Gradient" id="Gradient_353jy"]
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_geruq"]
-width = 1000
-height = 1000
-seamless = true
-seamless_blend_skirt = 0.5
-as_normal_map = true
-color_ramp = SubResource("Gradient_353jy")
-noise = ExtResource("3_btn51")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_g8jqd"]
-resource_local_to_scene = true
-render_priority = 0
-shader = SubResource("Shader_5yamw")
-shader_parameter/color = Color(0, 0, 1, 0.8)
-shader_parameter/noiseTexture = SubResource("NoiseTexture2D_yuxnp")
-shader_parameter/noiseTexture2 = SubResource("NoiseTexture2D_geruq")
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_juddp"]
-resource_local_to_scene = true
-material = SubResource("ShaderMaterial_g8jqd")
-size = Vector2(100, 100)
-subdivide_width = 1000
-subdivide_depth = 1000
-
-[sub_resource type="GDScript" id="GDScript_3oqdn"]
-script/source = "@tool
-extends MeshInstance3D
-func _physics_process(_delta: float) -> void:
-	global_position = Vector3(int(%Player.global_position.x),global_position.y,int(%Player.global_position.z))
-"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jyrro"]
 albedo_color = Color(0, 0, 0, 1)
@@ -261,19 +176,13 @@ metadata/_edit_lock_ = true
 environment = SubResource("Environment_ymbfg")
 camera_attributes = SubResource("CameraAttributesPractical_j3b7v")
 
-[node name="KiriWater" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0282822, 0.793682, 0.158004)
-mesh = SubResource("PlaneMesh_qor6q")
-
 [node name="Water" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.90735e-06, 0)
-visible = false
-mesh = SubResource("PlaneMesh_juddp")
-skeleton = NodePath("../MapObjects")
-script = SubResource("GDScript_3oqdn")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.672333, 0)
+mesh = SubResource("PlaneMesh_qor6q")
+script = ExtResource("3_3mbvb")
 
 [node name="Back" type="MeshInstance3D" parent="Water"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 mesh = SubResource("PlaneMesh_3bwtb")
 
 [node name="MapObjects" type="Node3D" parent="."]
@@ -281,6 +190,7 @@ unique_name_in_owner = true
 metadata/_edit_lock_ = true
 
 [node name="Navigation" type="NavigationRegion3D" parent="MapObjects"]
+visible = false
 navigation_mesh = SubResource("NavigationMesh_0y2iq")
 navigation_layers = 5
 

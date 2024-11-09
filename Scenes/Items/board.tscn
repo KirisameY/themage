@@ -65,6 +65,5 @@ outline_size = 20
 visible = false
 
 [node name="Text" parent="Info" index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.994003, 0)
 visible = false
 text = "查看"
