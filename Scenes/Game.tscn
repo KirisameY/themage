@@ -1,7 +1,8 @@
-[gd_scene load_steps=39 format=3 uid="uid://bumttdvbt0da8"]
+[gd_scene load_steps=42 format=3 uid="uid://bumttdvbt0da8"]
 
 [ext_resource type="PackedScene" uid="uid://bb68gnxsxx8hy" path="res://Scenes/Map.tscn" id="1_gi0pr"]
 [ext_resource type="Script" path="res://Scripts/Game.cs" id="1_gs5qa"]
+[ext_resource type="Shader" path="res://Assets/Shaders/Water.gdshader" id="2_e7kep"]
 [ext_resource type="MeshLibrary" uid="uid://jwuuuhrpfkcb" path="res://Assets/Blocks.tres" id="2_j05nu"]
 [ext_resource type="FastNoiseLite" uid="uid://buwnasnly01lv" path="res://Assets/Textures/Misc/Noise.res" id="3_btn51"]
 [ext_resource type="PackedScene" uid="uid://d2cd4cnoxpxhl" path="res://Scenes/Player.tscn" id="3_jfay1"]
@@ -39,6 +40,26 @@ fog_depth_end = 50.0
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_j3b7v"]
 dof_blur_far_enabled = true
 dof_blur_far_distance = 30.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_giygt"]
+render_priority = 0
+shader = ExtResource("2_e7kep")
+shader_parameter/DepthEffect = 1.75
+shader_parameter/Color = Color(0.24, 0.721, 1, 1)
+shader_parameter/DepthColor = Color(0, 0.384, 0.702, 1)
+shader_parameter/Transparency = 0.9
+shader_parameter/WaveStrength = 0.8
+shader_parameter/WaveScale = Vector2(1, 1)
+shader_parameter/WaveColor = Color(0, 0.82, 1, 0.22)
+shader_parameter/WaveSpeed = Vector2(0.1, 0.12)
+shader_parameter/BlurSize = 1.2
+shader_parameter/BlurStrength = 1.2
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_qor6q"]
+material = SubResource("ShaderMaterial_giygt")
+size = Vector2(100, 100)
+subdivide_width = 1
+subdivide_depth = 1
 
 [sub_resource type="Shader" id="Shader_5yamw"]
 code = "shader_type spatial;
@@ -148,9 +169,9 @@ filter_ledge_spans = true
 [sub_resource type="Resource" id="Resource_kuxv7"]
 resource_local_to_scene = true
 script = ExtResource("8_ehr1c")
-Warmup = 0.2
-Delay = 1.0
-Range = 1.0
+Warmup = 0.0
+Delay = 0.0
+Range = 0.0
 Level = 0
 IsTargetGround = false
 Data = {}
@@ -158,9 +179,9 @@ Data = {}
 [sub_resource type="Resource" id="Resource_bb2b8"]
 resource_local_to_scene = true
 script = ExtResource("8_ehr1c")
-Warmup = 0.2
-Delay = 1.0
-Range = 1.0
+Warmup = 0.0
+Delay = 0.0
+Range = 0.0
 Level = 0
 IsTargetGround = false
 Data = {}
@@ -168,9 +189,9 @@ Data = {}
 [sub_resource type="Resource" id="Resource_o2q56"]
 resource_local_to_scene = true
 script = ExtResource("8_ehr1c")
-Warmup = 0.2
-Delay = 1.0
-Range = 1.0
+Warmup = 0.0
+Delay = 0.0
+Range = 0.0
 Level = 0
 IsTargetGround = false
 Data = {}
@@ -178,9 +199,9 @@ Data = {}
 [sub_resource type="Resource" id="Resource_yv61a"]
 resource_local_to_scene = true
 script = ExtResource("8_ehr1c")
-Warmup = 0.2
-Delay = 1.0
-Range = 1.0
+Warmup = 0.0
+Delay = 0.0
+Range = 0.0
 Level = 0
 IsTargetGround = false
 Data = {}
@@ -188,9 +209,9 @@ Data = {}
 [sub_resource type="Resource" id="Resource_p2gas"]
 resource_local_to_scene = true
 script = ExtResource("8_ehr1c")
-Warmup = 0.2
-Delay = 1.0
-Range = 1.0
+Warmup = 0.0
+Delay = 0.0
+Range = 0.0
 Level = 0
 IsTargetGround = false
 Data = {}
@@ -240,8 +261,13 @@ metadata/_edit_lock_ = true
 environment = SubResource("Environment_ymbfg")
 camera_attributes = SubResource("CameraAttributesPractical_j3b7v")
 
+[node name="KiriWater" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0282822, 0.793682, 0.158004)
+mesh = SubResource("PlaneMesh_qor6q")
+
 [node name="Water" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.90735e-06, 0)
+visible = false
 mesh = SubResource("PlaneMesh_juddp")
 skeleton = NodePath("../MapObjects")
 script = SubResource("GDScript_3oqdn")
