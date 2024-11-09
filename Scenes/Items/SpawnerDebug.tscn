@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://dqw2ygpfya2dw" path="res://Scenes/Item.tscn" id="1_wpov7"]
 [ext_resource type="Script" path="res://Scripts/Items/SpawnerDebug.cs" id="2_4o0ve"]
+[ext_resource type="Texture2D" uid="uid://ch3m0bgwx8jsk" path="res://Assets/Models/Blocks/SpawnerStoneZero.png" id="3_i0op4"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ouyol"]
 load_path = "res://.godot/imported/SpawnerStoneBase.png-ac7417ae19346db8cf9f9b839d557077.ctex"
@@ -13,12 +14,9 @@ albedo_texture = SubResource("CompressedTexture2D_ouyol")
 texture_filter = 0
 grow_amount = 0.26
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_i7d17"]
-load_path = "res://.godot/imported/SpawnerStoneEther.png-9a9a0d9c001bd525bba3627f4ce73d0c.ctex"
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_emjhm"]
 resource_name = "m_c9cdbc95-39f5-283f-68a8-952e8b5cf7f6"
-albedo_texture = SubResource("CompressedTexture2D_i7d17")
+albedo_texture = ExtResource("3_i0op4")
 emission_enabled = true
 emission = Color(1, 1, 1, 1)
 emission_energy_multiplier = 1.81
@@ -64,6 +62,7 @@ mesh = SubResource("ArrayMesh_q5mbc")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.994003, 0)
 
 [node name="Obstracle" type="NavigationObstacle3D" parent="." index="3"]
+visible = false
 radius = 0.5
 height = 0.5
 vertices = PackedVector3Array(1, 0, 1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
