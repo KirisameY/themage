@@ -107,11 +107,13 @@ shape = SubResource("CylinderShape3D_13iia")
 
 [node name="Image" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
 pixel_size = 0.0313
 billboard = 1
 double_sided = false
+alpha_cut = 3
 texture_filter = 0
 texture = ExtResource("1_j6mc3")
 hframes = 4
@@ -129,7 +131,7 @@ autoplay = "Idle"
 
 [node name="Shadow" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.35, 0)
-transparency = 1.0
+cast_shadow = 3
 mesh = SubResource("CylinderMesh_kn666")
 
 [node name="ItemPick" type="Area3D" parent="."]
